@@ -1,97 +1,76 @@
-# 🌐 Personal Portfolio & Website
+# 🌐 Krishnasankar - Personal Portfolio Website
 
-A sleek, modern, fully responsive personal portfolio website built with semantic **HTML5**, modern **CSS3** (custom properties & Grid/Flexbox), and vanilla **JavaScript**.
+A sleek, responsive developer portfolio website designed for **Krishnasankar** ([@krishnasankar](https://github.com/krishnasankar)), featuring real projects including **[MonthlyExpenseTracker](https://github.com/krishnasankar/MonthlyExpenseTracker)**, mobile applications, and web tools.
 
-Zero build dependencies required — ready to be hosted directly on **GitHub Pages** for free with automated HTTPS!
+Zero build dependencies required — ready to be hosted immediately on **GitHub Pages** with free HTTPS!
 
 ---
 
 ## ✨ Features
 
-- 🌓 **Dark / Light Mode**: One-click theme toggle with automatic system preference detection and `localStorage` persistence.
-- 📱 **Fully Responsive**: Flawless layout on desktops, tablets, and mobile screens with a mobile hamburger navigation drawer.
-- ⚡ **Zero-Build Architecture**: Pure web standards. No `npm install`, Node.js, or complex build setups required.
-- 🎯 **Portfolio Sections**:
-  - **Hero**: Eye-catching greeting, role badges, live status indicator, and CTA buttons.
-  - **About Me**: Personal bio and core philosophy cards.
-  - **Skills Grid**: Categorized technologies (Frontend, Backend, Tools & DevOps).
-  - **Featured Projects**: Interactive cards with browser mockups, tags, and direct links to code and demos.
-  - **Experience / Timeline**: Clean milestone journey.
-  - **Contact Section**: Social reach-out links and an interactive contact form.
-- 🔒 **GitHub Pages Ready**: Host for free under `https://<your-username>.github.io` or `https://<your-username>.github.io/<repo-name>`.
+- 🌓 **Dark / Light Mode**: One-click theme toggle with persistent storage and OS preference detection.
+- 📱 **Fully Responsive**: Optimized for desktop, tablet, and mobile with an interactive navigation drawer.
+- ⚡ **Zero-Build Architecture**: Pure semantic HTML5, modern CSS3 variables, and vanilla JavaScript.
+- 🚀 **Projects Showcased**:
+  - **MonthlyExpenseTracker**: Android Java application with Room database persistence, category budgeting, and analytics dashboard.
+  - **Developer Portfolio**: This responsive website hosted on GitHub Pages.
+  - **2048 Game**: Interactive tile-sliding puzzle game implementation.
+- 📬 **Direct Contact Info**: Reachable at `krishnasankar15@gmail.com` and `github.com/krishnasankar`.
 
 ---
 
-## 🚀 Quick Local Preview
+## 💻 Local Preview
 
-You can preview the site immediately on your computer:
-
-### Option 1: Direct File Opening
-Double-click `index.html` or right-click `index.html` -> **Open with** -> Your favorite browser (Chrome, Edge, Firefox, Brave, etc.).
-
-### Option 2: Local HTTP Server (Recommended)
-If you have Python installed, open terminal in this folder and run:
-```bash
+Double-click `index.html` to view it in your browser, or start a local server:
+```powershell
+# Using Python (if installed)
 python -m http.server 8000
+
+# Or simply open index.html in your browser
+Start-Process "index.html"
 ```
-Then visit: [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## 🛠️ How to Customize
+## 🚢 Deploy to GitHub Pages (Step-by-Step)
 
-1. **Your Details**: Open `index.html` and search for `Your Name` or `YourName` and replace with your real name.
-2. **Social Links**: Update the GitHub, LinkedIn, and email address URLs in `index.html` under the `#home` and `#contact` sections.
-3. **Projects**: Edit the titles, descriptions, and links inside `<div class="projects__grid">`.
-4. **Skills**: Add or remove tags under `<div class="skills__grid">`.
-5. **Contact Form**: The current form demonstrates client-side submission with instant feedback. To receive real emails from visitors, you can connect it for free to services like [Formspree](https://formspree.io/) or [Web3Forms](https://web3forms.com/) by updating the `<form action="...">` attribute.
+### Step 1: Create the Repository on GitHub
+1. Go to **[github.com/new](https://github.com/new)**.
+2. Under **Repository name**:
+   - **Recommended**: Name it `krishnasankar.github.io`. Your site will be published at `https://krishnasankar.github.io`.
+   - *Or*: Name it `MyWebPage` (your site will be at `https://krishnasankar.github.io/MyWebPage/`).
+3. Set visibility to **Public**.
+4. Leave "Add a README file" **unchecked** (we already have one).
+5. Click **Create repository**.
 
 ---
 
-## 🚢 How to Push to GitHub & Host on GitHub Pages
+### Step 2: Push Your Local Code
+In your PowerShell terminal inside this folder (`MyWebPage`), run the following commands:
 
-Follow these simple steps to deploy your site live to the web:
+#### If you chose `krishnasankar.github.io`:
+```powershell
+git remote add origin https://github.com/krishnasankar/krishnasankar.github.io.git
+git branch -M main
+git push -u origin main
+```
 
-### Step 1: Create a Repository on GitHub
-1. Log in to [GitHub](https://github.com).
-2. Click the **+** (plus) icon at the top right and select **New repository**.
-3. Repository name options:
-   - **Option A (User site - recommended)**: Name it `<your-github-username>.github.io`. Your site URL will be `https://<your-github-username>.github.io`.
-   - **Option B (Project site)**: Name it anything you like (e.g. `MyWebPage` or `portfolio`). Your site URL will be `https://<your-github-username>.github.io/<repo-name>`.
-4. Keep it **Public** (GitHub Pages is free for public repositories).
-5. Leave "Add a README file" **unchecked** (we already have one!).
-6. Click **Create repository**.
-
-### Step 2: Push Your Code from Your Computer
-Open PowerShell or Terminal in this folder (`MyWebPage`) and run:
-
-```bash
-# 1. Initialize git if not already initialized
-git init -b main
-
-# 2. Add all files and make the initial commit
-git add .
-git commit -m "Initial commit: personal website for GitHub Pages"
-
-# 3. Link your local project to your GitHub repository
-# (Replace USERNAME and REPO-NAME with your real GitHub username and repo name)
-git remote add origin https://github.com/USERNAME/REPO-NAME.git
-
-# 4. Push to GitHub
+#### If you chose `MyWebPage`:
+```powershell
+git remote add origin https://github.com/krishnasankar/MyWebPage.git
+git branch -M main
 git push -u origin main
 ```
 
 ---
 
-### Step 3: Enable GitHub Pages
-
-Once your code is on GitHub:
-1. In your GitHub repository, click on **Settings** (tab near the top right).
-2. In the left sidebar, click on **Pages** (under the "Code and automation" section).
-3. Under **Build and deployment**:
+### Step 3: Activate GitHub Pages
+1. Go to your repository on GitHub.
+2. Click **Settings** (tab at the top).
+3. Click **Pages** (in the left navigation under "Code and automation").
+4. Under **Build and deployment**:
    - **Source**: Select `Deploy from a branch`.
    - **Branch**: Select `main` and keep folder as `/(root)`.
-4. Click **Save**.
-5. Wait 1 to 2 minutes. Refresh the page, and GitHub will provide your live website link at the top (e.g., `https://<your-username>.github.io`).
-
-🎉 **Your website is now live on the internet!**
+5. Click **Save**.
+6. Within 1 to 2 minutes, GitHub will show:
+   > 🚀 **Your site is live at https://krishnasankar.github.io**
