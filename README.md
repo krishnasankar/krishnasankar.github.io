@@ -1,6 +1,8 @@
-# 🌐 Krishnasankar - Personal Portfolio Website
+# 🌐 Krishnasankar - Senior Software Engineer & Portfolio
 
-A sleek, responsive developer portfolio website designed for **Krishnasankar** ([@krishnasankar](https://github.com/krishnasankar)), featuring real projects including **[MonthlyExpenseTracker](https://github.com/krishnasankar/MonthlyExpenseTracker)**, mobile applications, and web tools.
+A modern, responsive portfolio website for **Krishnasankar** ([@krishnasankar](https://github.com/krishnasankar)), Senior Software Engineer at **Oracle (OFSS)** with 10+ years of experience based in Bengaluru, India.
+
+Showcases enterprise engineering in **Core Java**, **Spring Boot**, **Oracle SQL**, and **UI**, alongside creative passion projects built for fun including **[MonthlyExpenseTracker](https://github.com/krishnasankar/MonthlyExpenseTracker)** (Android/Room) and **[NotePilot](https://github.com/krishnasankar/NotePilot)** (Android/AI Assistant).
 
 Zero build dependencies required — ready to be hosted immediately on **GitHub Pages** with free HTTPS!
 
@@ -11,11 +13,17 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
 - 🌓 **Dark / Light Mode**: One-click theme toggle with persistent storage and OS preference detection.
 - 📱 **Fully Responsive**: Optimized for desktop, tablet, and mobile with an interactive navigation drawer.
 - ⚡ **Zero-Build Architecture**: Pure semantic HTML5, modern CSS3 variables, and vanilla JavaScript.
-- 🚀 **Projects Showcased**:
-  - **MonthlyExpenseTracker**: Android Java application with Room database persistence, category budgeting, and analytics dashboard.
-  - **Developer Portfolio**: This responsive website hosted on GitHub Pages.
-  - **2048 Game**: Interactive tile-sliding puzzle game implementation.
-- 📬 **Direct Contact Info**: Reachable at `krishnasankar15@gmail.com` and `github.com/krishnasankar`.
+- 💼 **Enterprise Background**: 10+ years of software engineering at Oracle Financial Services Software (OFSS).
+- 🚀 **Passion Projects Showcased**:
+  - **MonthlyExpenseTracker** (Flagship): Offline-first Android Java application with Jetpack Room persistence, category budgeting v2.0, interactive Canvas donut analytics, and home screen widget.
+  - **NotePilot** (Flagship): Private AI notes assistant Android app integrating OpenRouter LLM completions, note context injection, autonomous function calling (`addOrUpdateNote`), safety confirmation diffs, voice recognition, and encrypted BYOK storage.
+  - **Developer Portfolio** (`krishnasankar.github.io`): Fast, responsive personal portfolio website hosted on GitHub Pages.
+  - **ghost** (Minor / Arcade): 2D retro arcade game and reusable extension built with Microsoft MakeCode Arcade and TypeScript.
+- 📬 **Direct Contact & Socials**:
+  - Email: `krishnasankar15@gmail.com`
+  - GitHub: [github.com/krishnasankar](https://github.com/krishnasankar)
+  - Instagram: [@krishna.sankar](https://www.instagram.com/krishna.sankar)
+  - Location: Bengaluru, India
 
 ---
 
