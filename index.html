@@ -295,40 +295,115 @@
 			  Outside of work, I'm an active <strong>drummer</strong> and share high-energy drum covers on my YouTube channel (<a href="https://www.youtube.com/@KrishnaDrums" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 600;">@KrishnaDrums</a>). I also enjoy building things just for the fun of it — from native Android apps like <strong>MonthlyExpenseTracker</strong> and <strong>NotePilot</strong> to experimenting with AI agent workflows and retro game development.
 			</p>
 			<p>
-			  When I'm not behind a keyboard or a drum kit, you'll usually find me playing <strong>board games</strong>, getting lost in <strong>simulator games</strong>, or experimenting with <strong>poi spinning</strong>.
+			  When I'm not behind a keyboard or a drum kit, you'll usually find me playing <strong>board/card games</strong>, getting lost in <strong>video games</strong>, or experimenting with <strong>poi spinning</strong>.
 			</p>	
-            <div class="about__hobbies">
-              <h3 class="about__hobbies-heading">Beyond Code &amp; Hobbies</h3>
+            <div class="about__hobbies" id="about-hobbies">
+              <h3 class="about__hobbies-heading">Hobbies &amp; Interests</h3>
               <div class="hobby-tags" role="list">
-                <span class="hobby-tag" role="listitem"><span class="hobby-tag__icon" aria-hidden="true">🎲</span> Board Games</span>
-                <span class="hobby-tag" role="listitem"><span class="hobby-tag__icon" aria-hidden="true">🕹️</span> Simulator Games</span>
-                <span class="hobby-tag" role="listitem"><span class="hobby-tag__icon" aria-hidden="true">🌀</span> Poi Spinning</span>
-                <span class="hobby-tag" role="listitem"><span class="hobby-tag__icon" aria-hidden="true">🥁</span> Drumming</span>
+                <button type="button" class="hobby-tag hobby-tag--btn" data-hobby="board-games" aria-expanded="false" aria-controls="hobby-pane-board-games">
+                  <span class="hobby-tag__icon" aria-hidden="true">🎲</span> Board/Card Games
+                </button>
+                <button type="button" class="hobby-tag hobby-tag--btn" data-hobby="video-games" aria-expanded="false" aria-controls="hobby-pane-video-games">
+                  <span class="hobby-tag__icon" aria-hidden="true">🎮</span> Video Games
+                </button>
+                <button type="button" class="hobby-tag hobby-tag--btn" data-hobby="poi-spinning" aria-expanded="false" aria-controls="hobby-pane-poi-spinning">
+                  <span class="hobby-tag__icon" aria-hidden="true">🌀</span> Poi Spinning
+                </button>
+                <a href="https://www.youtube.com/@KrishnaDrums" target="_blank" rel="noopener noreferrer" class="hobby-tag hobby-tag--link" title="Visit @KrishnaDrums on YouTube (opens in a new tab)">
+                  <span class="hobby-tag__icon" aria-hidden="true">🥁</span> Drumming
+                  <svg class="hobby-tag__external" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+              </div>
+
+              <!-- Interactive Hobby Details Drawer -->
+              <div class="hobby-drawer" id="hobby-drawer" hidden>
+                <!-- Board/Card Games Pane -->
+                <div class="hobby-drawer__pane" id="hobby-pane-board-games" role="region" aria-label="Board and card games">
+                  <div class="hobby-drawer__header">
+                    <div class="hobby-drawer__title-wrap">
+                      <span class="hobby-drawer__icon" aria-hidden="true">🎲</span>
+                      <h4 class="hobby-drawer__title">Board/Card Games I Play</h4>
+                    </div>
+                    <button type="button" class="hobby-drawer__close" aria-label="Close details">&times;</button>
+                  </div>
+                  <ul class="hobby-drawer__chips">
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">🏰</span> <strong>Catan</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">⛏️</span> <strong>Saboteur</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">💎</span> <strong>Splendor</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">🕵️</span> <strong>Mafia</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">♠️</span> <strong>Poker</strong></li>
+                  </ul>
+                </div>
+
+                <!-- Video Games Pane -->
+                <div class="hobby-drawer__pane" id="hobby-pane-video-games" role="region" aria-label="Video games">
+                  <div class="hobby-drawer__header">
+                    <div class="hobby-drawer__title-wrap">
+                      <span class="hobby-drawer__icon" aria-hidden="true">🎮</span>
+                      <h4 class="hobby-drawer__title">Video Games I Play</h4>
+                    </div>
+                    <button type="button" class="hobby-drawer__close" aria-label="Close details">&times;</button>
+                  </div>
+                  <ul class="hobby-drawer__chips">
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">🚛</span> <strong>ETS2</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">🏎️</span> <strong>FH5</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">🎮</span> <strong>Split Fiction</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">👥</span> <strong>It Takes Two</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">📦</span> <strong>Death Stranding</strong></li>
+                    <li class="hobby-chip"><span class="hobby-chip__bullet" aria-hidden="true">⚽</span> <strong>FIFA</strong></li>
+                  </ul>
+                </div>
+
+                <!-- Poi Spinning Pane -->
+                <div class="hobby-drawer__pane" id="hobby-pane-poi-spinning" role="region" aria-label="Poi spinning">
+                  <div class="hobby-drawer__header">
+                    <div class="hobby-drawer__title-wrap">
+                      <span class="hobby-drawer__icon" aria-hidden="true">🌀</span>
+                      <h4 class="hobby-drawer__title">What is Poi Spinning?</h4>
+                    </div>
+                    <button type="button" class="hobby-drawer__close" aria-label="Close details">&times;</button>
+                  </div>
+                  <p class="hobby-drawer__desc">
+                    <a href="https://en.wikipedia.org/wiki/Poi_(performance_art)" target="_blank" rel="noopener noreferrer">Poi</a> is a traditional flow art originating from the indigenous Māori people of New Zealand. It involves swinging tethered weights rhythmically in geometric patterns and circular planes around the body. It blends rhythm, motor coordination, spatial geometry, and movement meditation.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="about__highlights">
-            <div class="highlight-card reveal reveal-delay-1">
-              <span class="highlight-card__icon" aria-hidden="true">💼</span>
+            <a href="https://www.linkedin.com/in/krishnasankars" target="_blank" rel="noopener noreferrer" class="highlight-card reveal reveal-delay-1" aria-label="Enterprise Engineering - Open LinkedIn profile (opens in new tab)">
+              <div class="highlight-card__header">
+                <span class="highlight-card__icon" aria-hidden="true">💼</span>
+                <span class="highlight-card__arrow" aria-hidden="true">↗</span>
+              </div>
               <h3 class="highlight-card__title">Enterprise Engineering</h3>
               <p class="highlight-card__text">10+ years at Oracle (OFSS) engineering resilient banking &amp; financial systems with Core Java, Spring Boot, and robust microservices.</p>
-            </div>
-            <div class="highlight-card reveal reveal-delay-2">
-              <span class="highlight-card__icon" aria-hidden="true">🥁</span>
+            </a>
+            <a href="https://www.youtube.com/@KrishnaDrums" target="_blank" rel="noopener noreferrer" class="highlight-card reveal reveal-delay-2" aria-label="Drummer &amp; Creator - Open YouTube channel (opens in new tab)">
+              <div class="highlight-card__header">
+                <span class="highlight-card__icon" aria-hidden="true">🥁</span>
+                <span class="highlight-card__arrow" aria-hidden="true">↗</span>
+              </div>
               <h3 class="highlight-card__title">Drummer &amp; Creator</h3>
-              <p class="highlight-card__text">Passionate drummer recording drum covers across diverse styles on YouTube at <a href="https://www.youtube.com/@KrishnaDrums" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 600;">@KrishnaDrums</a>.</p>
-            </div>
-            <div class="highlight-card reveal reveal-delay-3">
-              <span class="highlight-card__icon" aria-hidden="true">🚀</span>
+              <p class="highlight-card__text">Passionate drummer recording drum covers across diverse styles on YouTube at <strong style="color: var(--accent);">@KrishnaDrums</strong>.</p>
+            </a>
+            <a href="https://github.com/krishnasankar" target="_blank" rel="noopener noreferrer" class="highlight-card reveal reveal-delay-3" aria-label="UI &amp; Passion Projects - Open GitHub profile (opens in new tab)">
+              <div class="highlight-card__header">
+                <span class="highlight-card__icon" aria-hidden="true">🚀</span>
+                <span class="highlight-card__arrow" aria-hidden="true">↗</span>
+              </div>
               <h3 class="highlight-card__title">UI &amp; Passion Projects</h3>
               <p class="highlight-card__text">Responsive UI development, native Android apps (Room DB &amp; AI Assistant), OpenRouter LLM tooling, and creative coding for fun.</p>
-            </div>
-            <div class="highlight-card reveal reveal-delay-4">
-              <span class="highlight-card__icon" aria-hidden="true">🎲</span>
+            </a>
+            <a href="https://www.instagram.com/krishna.sankar" target="_blank" rel="noopener noreferrer" class="highlight-card reveal reveal-delay-4" aria-label="Games &amp; Flow Arts - Open Instagram profile (opens in new tab)">
+              <div class="highlight-card__header">
+                <span class="highlight-card__icon" aria-hidden="true">🎲</span>
+                <span class="highlight-card__arrow" aria-hidden="true">↗</span>
+              </div>
               <h3 class="highlight-card__title">Games &amp; Flow Arts</h3>
-              <p class="highlight-card__text">Board game strategist, simulator enthusiast, and poi spinning flow artist exploring rhythm and motion.</p>
-            </div>
+              <p class="highlight-card__text">Board/card game strategist, video game enthusiast, and poi spinning flow artist exploring rhythm and motion.</p>
+            </a>
           </div>
         </div>
       </div>
@@ -729,7 +804,7 @@
           <div class="contact__info reveal">
             <h3 class="contact__info-title">Let's talk about building something great</h3>
             <p class="contact__info-text">
-              Whether you'd like to discuss enterprise software architecture, Core Java &amp; Spring Boot systems, Android apps, drum grooves, board games, or simply say hello — feel free to reach out!
+              Whether you'd like to discuss enterprise software architecture, Core Java &amp; Spring Boot systems, Android apps, drum grooves, board/card games, video games, or simply say hello — feel free to reach out!
             </p>
 
             <address class="contact__details" style="font-style: normal;">

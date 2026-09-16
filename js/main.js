@@ -602,4 +602,80 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /* ==========================================================================
+     INTERACTIVE HOBBIES DRAWER
+     ========================================================================== */
+  const hobbyDrawer = document.getElementById('hobby-drawer');
+  const hobbyButtons = document.querySelectorAll('.hobby-tag--btn');
+  const hobbyPanes = document.querySelectorAll('.hobby-drawer__pane');
+  const hobbyCloseButtons = document.querySelectorAll('.hobby-drawer__close');
+  const drummingLink = document.querySelector('.hobby-tag--link');
+
+  if (hobbyDrawer && hobbyButtons.length > 0) {
+    function closeHobbyDrawer() {
+      hobbyDrawer.hidden = true;
+      hobbyButtons.forEach((btn) => {
+        btn.setAttribute('aria-expanded', 'false');
+        btn.classList.remove('is-active');
+      });
+      hobbyPanes.forEach((pane) => pane.classList.remove('is-active'));
+    }
+
+    function openHobbyPane(hobbyKey, triggerBtn) {
+      const targetPane = document.getElementById(`hobby-pane-${hobbyKey}`);
+      if (!targetPane) return;
+
+      const isAlreadyActive = triggerBtn.getAttribute('aria-expanded') === 'true';
+
+      if (isAlreadyActive) {
+        closeHobbyDrawer();
+        return;
+      }
+
+      // Reset all buttons & panes
+      hobbyButtons.forEach((btn) => {
+        btn.setAttribute('aria-expanded', 'false');
+        btn.classList.remove('is-active');
+      });
+      hobbyPanes.forEach((pane) => pane.classList.remove('is-active'));
+
+      // Activate selected
+      triggerBtn.setAttribute('aria-expanded', 'true');
+      triggerBtn.classList.add('is-active');
+      hobbyDrawer.hidden = false;
+      targetPane.classList.add('is-active');
+    }
+
+    hobbyButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const hobbyKey = btn.getAttribute('data-hobby');
+        openHobbyPane(hobbyKey, btn);
+      });
+    });
+
+    hobbyCloseButtons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeHobbyDrawer();
+      });
+    });
+
+    if (drummingLink) {
+      drummingLink.addEventListener('click', () => {
+        closeHobbyDrawer();
+      });
+    }
+
+
+    // Close on Escape key if inside drawer
+    hobbyDrawer.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const activeBtn = document.querySelector('.hobby-tag--btn.is-active');
+        closeHobbyDrawer();
+        if (activeBtn) activeBtn.focus();
+      }
+    });
+  }
+
 });
+
