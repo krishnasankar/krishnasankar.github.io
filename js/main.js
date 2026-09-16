@@ -6,6 +6,7 @@
  *  - Active Navigation Link on Scroll (IntersectionObserver-based)
  *  - Header scroll shadow
  *  - Scroll-reveal animations (IntersectionObserver)
+ *  - Interactive REPL terminal in hero section
  *  - Dynamic Copyright Year
  *  - Contact Form submission with loading state & feedback
  */
@@ -222,4 +223,267 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ==========================================================================
+     8. INTERACTIVE REPL TERMINAL
+     ========================================================================== */
+  const replInput    = document.getElementById('repl-input');
+  const replOutput   = document.getElementById('repl-output');
+  const replHints    = document.querySelectorAll('.repl-hint');
+  const replTabs     = document.querySelectorAll('.repl-tab');
+
+  if (replInput && replOutput) {
+
+    // ── Data model ─────────────────────────────────────────────────────────
+    const engineer = {
+      name:        'Krishnasankar',
+      role:        'Senior Software Engineer',
+      company:     'Oracle (OFSS)',
+      experience:  '10+ Years',
+      location:    'Bengaluru, India',
+      coreStack:   ['Core Java', 'Spring Boot', 'Oracle SQL', 'Modern UI'],
+      passions:    ['Drumming (@KrishnaDrums)', 'Android & AI Apps'],
+      hobbies:     ['Board Games', 'Poi Spinning', 'Long Drives'],
+    };
+
+    // ── All queryable expressions ───────────────────────────────────────────
+    const COMMANDS = [
+      'engineer.name', 'engineer.role', 'engineer.company',
+      'engineer.experience', 'engineer.location',
+      'engineer.coreStack', 'engineer.passions', 'engineer.hobbies',
+      'Object.keys(engineer)', 'engineer', 'help', 'clear',
+    ];
+
+    // ── Command history ─────────────────────────────────────────────────────
+    let history    = [];
+    let historyIdx = -1;
+
+    // ── Tab-switching ───────────────────────────────────────────────────────
+    replTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        replTabs.forEach(t => {
+          t.classList.toggle('repl-tab--active', t === tab);
+          t.setAttribute('aria-selected', String(t === tab));
+        });
+        document.getElementById('panel-repl').classList.toggle('repl-panel--hidden',   target !== 'repl');
+        document.getElementById('panel-source').classList.toggle('repl-panel--hidden', target !== 'source');
+        if (target === 'repl') replInput.focus();
+      });
+    });
+
+    // ── Helpers ─────────────────────────────────────────────────────────────
+    function addLine(text, type, delay = 0) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const div = document.createElement('div');
+          div.className = `repl-line repl-line--${type} repl-line--new`;
+          div.textContent = text;
+          replOutput.appendChild(div);
+          replOutput.scrollTop = replOutput.scrollHeight;
+          // Remove animation class after it plays so it doesn't retrigger
+          div.addEventListener('animationend', () => div.classList.remove('repl-line--new'), { once: true });
+          resolve(div);
+        }, delay);
+      });
+    }
+
+    function formatValue(val) {
+      if (Array.isArray(val)) {
+        const items = val.map(v => `  '${v}'`).join(',\n');
+        return { text: `[\n${items}\n]`, type: 'array' };
+      }
+      if (typeof val === 'object' && val !== null) {
+        const lines = Object.entries(val)
+          .map(([k, v]) => `  ${k}: ${JSON.stringify(v)}`)
+          .join(',\n');
+        return { text: `{\n${lines}\n}`, type: 'object' };
+      }
+      if (typeof val === 'string') return { text: `'${val}'`, type: 'string' };
+      if (typeof val === 'number') return { text: String(val), type: 'number' };
+      return { text: String(val), type: 'info' };
+    }
+
+    function clearOutput() {
+      replOutput.innerHTML = '';
+      addLine('// Output cleared.', 'comment');
+    }
+
+    function showHelp() {
+      const lines = [
+        '// Available expressions:',
+        '  engineer              → the full object',
+        '  engineer.name         → \'Krishnasankar\'',
+        '  engineer.role         → job title',
+        '  engineer.company      → employer',
+        '  engineer.experience   → years',
+        '  engineer.location     → city & country',
+        '  engineer.coreStack    → tech stack array',
+        '  engineer.passions     → creative projects',
+        '  engineer.hobbies      → life outside code',
+        '  Object.keys(engineer) → all property names',
+        '  clear                 → clear the output',
+        '',
+        '// Tip: press ↑/↓ to recall history, Tab to autocomplete.',
+      ];
+      lines.forEach((l, i) => {
+        const type = l.startsWith('//') ? 'comment' : l.startsWith('  //') ? 'comment' : 'help';
+        addLine(l, type, i * 30);
+      });
+    }
+
+    // ── Evaluate user input ─────────────────────────────────────────────────
+    function evaluate(raw) {
+      const cmd = raw.trim();
+      if (!cmd) return;
+
+      // Record to history
+      if (history[0] !== cmd) history.unshift(cmd);
+      if (history.length > 30) history.pop();
+      historyIdx = -1;
+
+      addLine(cmd, 'input');
+
+      if (cmd === 'clear') { clearOutput(); return; }
+      if (cmd === 'help')  { showHelp();    return; }
+
+      // Easter eggs
+      if (/^(hi|hello|hey)$/i.test(cmd)) {
+        addLine(`'Hey there! 👋 Try: engineer.name'`, 'string'); return;
+      }
+      if (/^(drums?|drumming|music)/i.test(cmd)) {
+        addLine(`'🥁 Check out @KrishnaDrums on YouTube!'`, 'string'); return;
+      }
+      if (/^(42|meaning of life)/i.test(cmd)) {
+        addLine(`42  // The answer to life, the universe, and everything.`, 'number'); return;
+      }
+      if (/^(rm\s+-rf|sudo|hack|exit)/i.test(cmd)) {
+        addLine(`Error: Nice try 😄  — this REPL is sandboxed!`, 'error'); return;
+      }
+      if (/^console\.log/i.test(cmd)) {
+        const inner = cmd.match(/console\.log\(["']?(.+?)["']?\)/)?.[1] ?? '...';
+        addLine(inner, 'info'); return;
+      }
+
+      // Resolve against engineer object
+      try {
+        let result;
+        const normalized = cmd
+          .replace(/^engineer\./, '')           // strip leading engineer.
+          .replace(/\[(\d+)\]/g, '[$1]');       // keep array access
+
+        if (cmd === 'engineer' || cmd === 'engineer;') {
+          result = engineer;
+        } else if (cmd === 'Object.keys(engineer)') {
+          result = Object.keys(engineer);
+        } else if (Object.prototype.hasOwnProperty.call(engineer, normalized.split('[')[0])) {
+          // Support: engineer.hobbies[0]
+          const propMatch = normalized.match(/^(\w+)(?:\[(\d+)\])?$/);
+          if (propMatch) {
+            const prop  = propMatch[1];
+            const idx   = propMatch[2] !== undefined ? Number(propMatch[2]) : undefined;
+            result      = idx !== undefined ? engineer[prop]?.[idx] : engineer[prop];
+          } else {
+            result = engineer[normalized];
+          }
+        } else {
+          throw new Error(`'${cmd}' is not defined`);
+        }
+
+        if (result === undefined) {
+          addLine('undefined', 'info');
+        } else {
+          const { text, type } = formatValue(result);
+          addLine(text, type);
+        }
+      } catch (err) {
+        addLine(`ReferenceError: ${err.message}`, 'error');
+        setTimeout(() => addLine('// Hint: type help for available commands.', 'comment'), 120);
+      }
+    }
+
+    // ── Autocomplete ────────────────────────────────────────────────────────
+    let autocompleteEl = document.querySelector('.repl-autocomplete');
+    if (!autocompleteEl) {
+      autocompleteEl = document.createElement('span');
+      autocompleteEl.className = 'repl-autocomplete';
+      autocompleteEl.setAttribute('aria-hidden', 'true');
+      replInput.parentElement.appendChild(autocompleteEl);
+    }
+
+    function getSuggestion(val) {
+      if (!val) return '';
+      const match = COMMANDS.find(c => c.startsWith(val) && c !== val);
+      return match ? match.slice(val.length) : '';
+    }
+
+    replInput.addEventListener('input', () => {
+      autocompleteEl.textContent = getSuggestion(replInput.value);
+    });
+
+    // ── Keyboard handling ───────────────────────────────────────────────────
+    replInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = replInput.value;
+        autocompleteEl.textContent = '';
+        replInput.value = '';
+        evaluate(val);
+      }
+
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const suggestion = getSuggestion(replInput.value);
+        if (suggestion) {
+          replInput.value += suggestion;
+          autocompleteEl.textContent = '';
+        }
+      }
+
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIdx < history.length - 1) {
+          historyIdx++;
+          replInput.value = history[historyIdx];
+          autocompleteEl.textContent = getSuggestion(replInput.value);
+          // Move cursor to end
+          setTimeout(() => replInput.setSelectionRange(replInput.value.length, replInput.value.length), 0);
+        }
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIdx > 0) {
+          historyIdx--;
+          replInput.value = history[historyIdx];
+        } else {
+          historyIdx = -1;
+          replInput.value = '';
+        }
+        autocompleteEl.textContent = getSuggestion(replInput.value);
+      }
+    });
+
+    // ── Hint chip clicks ────────────────────────────────────────────────────
+    replHints.forEach(btn => {
+      btn.addEventListener('click', () => {
+        replInput.value = btn.dataset.cmd;
+        autocompleteEl.textContent = '';
+        replInput.focus();
+        evaluate(btn.dataset.cmd);
+        replInput.value = '';
+      });
+    });
+
+    // ── Click anywhere in the output area focuses the input ────────────────
+    replOutput.addEventListener('click', () => replInput.focus());
+
+    // ── Auto-run a welcome demo after a short delay ─────────────────────────
+    setTimeout(() => {
+      if (replOutput.children.length <= 2) { // only if still showing welcome msgs
+        replInput.placeholder = 'engineer.name';
+      }
+    }, 1800);
+  }
+
 });
+

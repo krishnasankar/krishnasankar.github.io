@@ -632,6 +632,239 @@ button:focus-visible {
 .code-bracket  { color: #94a3b8; }
 
 /* ==========================================================================
+   REPL / INTERACTIVE TERMINAL
+   ========================================================================== */
+
+/* Override card role from img → interactive */
+.repl-card {
+  cursor: default;
+}
+
+/* Tab bar */
+.repl-tabs {
+  display: flex;
+  gap: 0.125rem;
+  margin-left: 0.75rem;
+}
+
+.repl-tab {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+  letter-spacing: 0.01em;
+}
+
+.repl-tab:hover {
+  color: #94a3b8;
+}
+
+.repl-tab--active {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Panels */
+.repl-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.repl-panel--hidden {
+  display: none;
+}
+
+/* Output area */
+.repl-output {
+  padding: 1rem 1.25rem 0.5rem;
+  min-height: 140px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  scroll-behavior: smooth;
+}
+
+/* Individual output lines */
+.repl-line {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.repl-line--comment {
+  color: #475569;
+  font-style: italic;
+}
+
+.repl-line--input {
+  color: #94a3b8;
+}
+
+.repl-line--input::before {
+  content: '> ';
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.repl-line--string  { color: #34d399; }
+.repl-line--number  { color: #fbbf24; }
+.repl-line--array   { color: #cbd5e1; }
+.repl-line--object  { color: #cbd5e1; }
+.repl-line--error   { color: #f87171; }
+.repl-line--info    { color: #38bdf8; }
+.repl-line--help    { color: #c084fc; }
+
+/* Typewriter cursor on last output line */
+.repl-line--typing::after {
+  content: '▌';
+  color: var(--accent);
+  animation: blink-cursor 1s step-end infinite;
+  margin-left: 1px;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Fade-in for new lines */
+@keyframes repl-line-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.repl-line--new {
+  animation: repl-line-in 0.18s ease forwards;
+}
+
+/* Input row */
+.repl-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1.25rem 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.repl-prompt {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.repl-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  color: #e2e8f0;
+  caret-color: var(--accent);
+  min-width: 0;
+}
+
+.repl-input::placeholder {
+  color: #334155;
+}
+
+/* Autocomplete ghost text overlay — handled via JS data attribute */
+.repl-input-row {
+  position: relative;
+}
+
+.repl-autocomplete {
+  position: absolute;
+  left: calc(1.25rem + 1.1rem + 0.5rem); /* prompt offset */
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  color: #1e3a52;
+  pointer-events: none;
+  white-space: pre;
+  user-select: none;
+}
+
+/* Hint chips */
+.repl-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.5rem 1.25rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.repl-hint {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: rgba(99, 102, 241, 0.06);
+  color: #818cf8;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.repl-hint:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
+}
+
+/* Light theme adjustments */
+[data-theme="light"] .repl-tab--active {
+  color: #1e293b;
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .repl-tab {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .repl-line--comment { color: #94a3b8; }
+[data-theme="light"] .repl-line--input   { color: #64748b; }
+[data-theme="light"] .repl-line--input::before { color: var(--accent); }
+[data-theme="light"] .repl-input         { color: #1e293b; }
+[data-theme="light"] .repl-input::placeholder { color: #cbd5e1; }
+[data-theme="light"] .repl-autocomplete  { color: #e2e8f0; }
+[data-theme="light"] .repl-line--array,
+[data-theme="light"] .repl-line--object  { color: #334155; }
+[data-theme="light"] .repl-hint {
+  border-color: rgba(79, 70, 229, 0.2);
+  background: rgba(79, 70, 229, 0.06);
+  color: var(--accent);
+}
+[data-theme="light"] .repl-hint:hover {
+  background: rgba(79, 70, 229, 0.12);
+  border-color: rgba(79, 70, 229, 0.4);
+}
+[data-theme="light"] .repl-line--string { color: #059669; }
+[data-theme="light"] .repl-line--number { color: #d97706; }
+[data-theme="light"] .repl-line--error  { color: #dc2626; }
+[data-theme="light"] .repl-line--info   { color: #0284c7; }
+[data-theme="light"] .repl-line--help   { color: #7c3aed; }
+
+/* ==========================================================================
    ABOUT SECTION
    ========================================================================== */
 .about {

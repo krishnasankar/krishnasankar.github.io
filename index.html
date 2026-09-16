@@ -155,26 +155,61 @@
           </div>
         </div>
 
-        <!-- Code card visual -->
+        <!-- Interactive REPL Card -->
         <div class="hero__visual reveal reveal-delay-2">
-          <div class="code-card" role="img" aria-label="Code snippet representing Krishnasankar as an engineer object">
-            <div class="code-card__header" aria-hidden="true">
-              <span class="code-dot dot-red"></span>
-              <span class="code-dot dot-yellow"></span>
-              <span class="code-dot dot-green"></span>
-              <span class="code-card__title">krishnasankar.js</span>
+          <div class="code-card repl-card" role="region" aria-label="Interactive terminal — type commands to learn about Krishnasankar">
+            <!-- Tab bar -->
+            <div class="code-card__header">
+              <span class="code-dot dot-red" aria-hidden="true"></span>
+              <span class="code-dot dot-yellow" aria-hidden="true"></span>
+              <span class="code-dot dot-green" aria-hidden="true"></span>
+              <div class="repl-tabs" role="tablist">
+                <button class="repl-tab repl-tab--active" role="tab" aria-selected="true"  data-tab="repl"   id="tab-repl">Terminal</button>
+                <button class="repl-tab"                  role="tab" aria-selected="false" data-tab="source" id="tab-source">Source</button>
+              </div>
             </div>
-            <pre class="code-card__body"><code><span class="code-keyword">const</span> <span class="code-variable">engineer</span> = <span class="code-bracket">{</span>
-  <span class="code-prop">name</span>:       <span class="code-string">'Krishnasankar'</span>,
-  <span class="code-prop">role</span>:       <span class="code-string">'Senior Software Engineer'</span>,
-  <span class="code-prop">company</span>:   <span class="code-string">'Oracle (OFSS)'</span>,
-  <span class="code-prop">experience</span>:<span class="code-string">'10+ Years'</span>,
-  <span class="code-prop">location</span>:  <span class="code-string">'Bengaluru, India'</span>,
-  <span class="code-prop">coreStack</span>: <span class="code-bracket">[</span>
-    <span class="code-string">'Core Java'</span>,
-    <span class="code-string">'Spring Boot'</span>,
-    <span class="code-string">'Oracle SQL'</span>,
-    <span class="code-string">'Modern UI'</span>
+
+            <!-- REPL / Terminal panel -->
+            <div class="repl-panel" id="panel-repl" role="tabpanel" aria-labelledby="tab-repl">
+              <div class="repl-output" id="repl-output" aria-live="polite" aria-atomic="false">
+                <div class="repl-line repl-line--comment">// 👋 Welcome! Query the engineer object.</div>
+                <div class="repl-line repl-line--comment">// Try: engineer.name · engineer.hobbies · help</div>
+              </div>
+              <div class="repl-input-row">
+                <span class="repl-prompt" aria-hidden="true">&gt;</span>
+                <input
+                  type="text"
+                  class="repl-input"
+                  id="repl-input"
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  placeholder="engineer.name"
+                  aria-label="Type a JavaScript expression to query the engineer object"
+                  maxlength="80"
+                >
+              </div>
+              <div class="repl-hints" aria-label="Quick command suggestions">
+                <button class="repl-hint" data-cmd="engineer.name">.name</button>
+                <button class="repl-hint" data-cmd="engineer.coreStack">.coreStack</button>
+                <button class="repl-hint" data-cmd="engineer.passions">.passions</button>
+                <button class="repl-hint" data-cmd="engineer.hobbies">.hobbies</button>
+                <button class="repl-hint" data-cmd="help">help</button>
+              </div>
+            </div>
+
+            <!-- Source panel -->
+            <div class="repl-panel repl-panel--hidden" id="panel-source" role="tabpanel" aria-labelledby="tab-source">
+              <pre class="code-card__body"><code><span class="code-keyword">const</span> <span class="code-variable">engineer</span> = <span class="code-bracket">{</span>
+  <span class="code-prop">name</span>:        <span class="code-string">'Krishnasankar'</span>,
+  <span class="code-prop">role</span>:        <span class="code-string">'Senior Software Engineer'</span>,
+  <span class="code-prop">company</span>:    <span class="code-string">'Oracle (OFSS)'</span>,
+  <span class="code-prop">experience</span>: <span class="code-string">'10+ Years'</span>,
+  <span class="code-prop">location</span>:   <span class="code-string">'Bengaluru, India'</span>,
+  <span class="code-prop">coreStack</span>:  <span class="code-bracket">[</span>
+    <span class="code-string">'Core Java'</span>, <span class="code-string">'Spring Boot'</span>,
+    <span class="code-string">'Oracle SQL'</span>, <span class="code-string">'Modern UI'</span>
   <span class="code-bracket">]</span>,
   <span class="code-prop">passions</span>: <span class="code-bracket">[</span>
     <span class="code-string">'Drumming (@KrishnaDrums)'</span>,
@@ -186,6 +221,7 @@
     <span class="code-string">'Long Drives'</span>
   <span class="code-bracket">]</span>
 <span class="code-bracket">}</span>;</code></pre>
+            </div>
           </div>
         </div>
       </div>
