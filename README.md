@@ -16,7 +16,7 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
 - 💼 **Enterprise Background**: 10+ years of software engineering at Oracle Financial Services Software (OFSS).
 - 🥁 **Interactive Drum Pad & Beat Machine**: Playable Web Audio API synthesized drum kit (Kick, Snare, Hi-Hat, Tom, Crash) in the hero section with keyboard triggers (`1`-`5` / `K`, `S`, `H`, `T`, `C`), visual pad hit animations, and an autoplay groove demo.
 - 🥁 **Drumming & Music Showcase**: Responsive embedded YouTube playlist of drum covers from [@KrishnaDrums](https://www.youtube.com/@KrishnaDrums).
-- 🎲 **Hobbies & Lifestyle**: Board games, simulator gaming, poi spinning (flow arts), and scenic long drives.
+- 🎲 **Hobbies & Lifestyle**: Board games, simulator gaming, and poi spinning (flow arts).
 - 🚀 **Passion Projects Showcased**:
   - **MonthlyExpenseTracker** (Flagship): Offline-first Android Java application with Jetpack Room persistence, category budgeting v2.0, interactive Canvas donut analytics, and home screen widget.
   - **NotePilot** (Flagship): Private AI notes assistant Android app integrating OpenRouter LLM completions, note context injection, autonomous function calling (`addOrUpdateNote`), safety confirmation diffs, voice recognition, and encrypted BYOK storage.
@@ -24,6 +24,7 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
   - **ghost** (Minor / Arcade): 2D retro arcade game and reusable extension built with Microsoft MakeCode Arcade and TypeScript.
 - 📬 **Direct Contact & Socials**:
   - Email: `krishnasankar15@gmail.com`
+  - LinkedIn: [linkedin.com/in/krishnasankars](https://www.linkedin.com/in/krishnasankars)
   - GitHub: [github.com/krishnasankar](https://github.com/krishnasankar)
   - YouTube: [@KrishnaDrums](https://www.youtube.com/@KrishnaDrums)
   - Instagram: [@krishna.sankar](https://www.instagram.com/krishna.sankar)

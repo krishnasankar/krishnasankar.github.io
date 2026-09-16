@@ -247,6 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleMinimize() {
       isMinimized = !isMinimized;
       drumCard.classList.toggle('drum-card--minimized', isMinimized);
+      if (isMinimized && typeof stopGroove === 'function' && isGroovePlaying) {
+        stopGroove();
+      }
       if (toggleBtn) {
         toggleBtn.setAttribute('aria-expanded', isMinimized ? 'false' : 'true');
         toggleBtn.setAttribute('aria-label', isMinimized ? 'Maximize drum pad' : 'Minimize drum pad');
@@ -478,6 +481,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.addEventListener('keydown', (e) => {
+      // Do not respond to keyboard inputs if the drum card is minimized
+      if (isMinimized) return;
+
       // Ignore key events when the user is typing in form fields
       const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
       if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) {
