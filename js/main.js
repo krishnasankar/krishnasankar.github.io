@@ -6,7 +6,7 @@
  *  - Active Navigation Link on Scroll (IntersectionObserver-based)
  *  - Header scroll shadow
  *  - Scroll-reveal animations (IntersectionObserver)
- *  - Interactive REPL terminal in hero section
+ *  - Interactive Drum Pad & Beat Machine in hero section (@KrishnaDrums)
  *  - Dynamic Copyright Year
  *  - Contact Form submission with loading state & feedback
  */
@@ -224,293 +224,376 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
-     8. INTERACTIVE REPL TERMINAL
+     8. INTERACTIVE DRUM PAD & BEAT MACHINE (@KrishnaDrums)
      ========================================================================== */
-  const replInput    = document.getElementById('repl-input');
-  const replOutput   = document.getElementById('repl-output');
-  const replHints    = document.querySelectorAll('.repl-hint');
-  const replTabs     = document.querySelectorAll('.repl-tab');
-  const replCard     = document.getElementById('repl-card');
-  const replHeader   = document.getElementById('repl-header');
+  const drumCard      = document.getElementById('drum-card');
+  const drumPads      = document.querySelectorAll('.drum-pad');
+  const grooveBtn     = document.getElementById('drum-groove-btn');
+  const grooveIcon    = document.getElementById('groove-icon');
+  const grooveText    = document.getElementById('groove-text');
+  const muteBtn       = document.getElementById('drum-mute-btn');
 
-  if (replInput && replOutput && replCard) {
+  if (drumCard && drumPads.length > 0) {
+    let audioCtx   = null;
+    let masterGain = null;
+    let noiseBuff  = null;
+    let isMuted    = false;
 
-    // ── Expand / Collapse ───────────────────────────────────────────────────
-    let isExpanded = false;
+    // ── Minimize / Maximize Toggle ───────────────────────────────────────────
+    const toggleBtn  = document.getElementById('drum-toggle-btn');
+    const cardHeader = document.getElementById('drum-card-header');
+    let isMinimized  = false;
 
-    function expandRepl() {
-      if (isExpanded) return;
-      isExpanded = true;
-      replCard.classList.remove('repl-card--collapsed');
-      replCard.setAttribute('aria-expanded', 'true');
-      replCard.setAttribute('aria-label', 'Interactive terminal — type commands to learn about Krishnasankar');
-      // Restore tab order for inner controls
-      replInput.removeAttribute('tabindex');
-      replHints.forEach(btn => btn.removeAttribute('tabindex'));
-      // Focus input after transition completes (~350ms)
-      setTimeout(() => replInput.focus(), 360);
+    function toggleMinimize() {
+      isMinimized = !isMinimized;
+      drumCard.classList.toggle('drum-card--minimized', isMinimized);
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-expanded', isMinimized ? 'false' : 'true');
+        toggleBtn.setAttribute('aria-label', isMinimized ? 'Maximize drum pad' : 'Minimize drum pad');
+        toggleBtn.setAttribute('title', isMinimized ? 'Maximize' : 'Minimize');
+      }
     }
 
-    // Click anywhere on the collapsed card header to expand
-    replHeader.addEventListener('click', expandRepl);
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMinimize();
+      });
+    }
 
-    // Also expand when the card itself receives keyboard focus while collapsed
-    replCard.addEventListener('focusin', () => {
-      if (!isExpanded) expandRepl();
-    });
+    // Clicking header while collapsed expands the card
+    if (cardHeader) {
+      cardHeader.addEventListener('click', () => {
+        if (isMinimized) {
+          toggleMinimize();
+        }
+      });
+    }
 
-    // ── Data model ─────────────────────────────────────────────────────────
-    const engineer = {
-      name:        'Krishnasankar',
-      role:        'Senior Software Engineer',
-      company:     'Oracle (OFSS)',
-      experience:  '10+ Years',
-      location:    'Bengaluru, India',
-      coreStack:   ['Core Java', 'Spring Boot', 'Oracle SQL', 'Modern UI'],
-      passions:    ['Drumming (@KrishnaDrums)', 'Android & AI Apps'],
-      hobbies:     ['Board Games', 'Poi Spinning', 'Long Drives'],
+    // ── Lazy AudioContext Initialization ─────────────────────────────────────
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return null;
+        audioCtx = new AudioContextClass();
+
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(0.85, audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
+
+        // Pre-render a 2-second white noise buffer for snare, hats, crash
+        const bufferSize = audioCtx.sampleRate * 2;
+        noiseBuff = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuff.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+      }
+
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      return audioCtx;
+    }
+
+    // ── Sound Synthesizers ──────────────────────────────────────────────────
+    function playKick(time) {
+      if (!initAudio()) return;
+      const t = time || audioCtx.currentTime;
+
+      const osc  = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      // Pitch drop from 145Hz to 32Hz
+      osc.frequency.setValueAtTime(145, t);
+      osc.frequency.exponentialRampToValueAtTime(32, t + 0.08);
+
+      // Punchy volume envelope
+      gain.gain.setValueAtTime(1.0, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(t);
+      osc.stop(t + 0.36);
+    }
+
+    function playSnare(time) {
+      if (!initAudio()) return;
+      const t = time || audioCtx.currentTime;
+
+      // 1. Tonal body (triangle wave 185Hz -> 65Hz)
+      const osc     = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(185, t);
+      osc.frequency.exponentialRampToValueAtTime(65, t + 0.07);
+      oscGain.gain.setValueAtTime(0.7, t);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      osc.connect(oscGain);
+      oscGain.connect(masterGain);
+      osc.start(t);
+      osc.stop(t + 0.13);
+
+      // 2. Snare rattle (filtered noise)
+      if (noiseBuff) {
+        const noise     = audioCtx.createBufferSource();
+        const filter    = audioCtx.createBiquadFilter();
+        const noiseGain = audioCtx.createGain();
+
+        noise.buffer = noiseBuff;
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1250, t);
+        filter.Q.setValueAtTime(1.2, t);
+
+        noiseGain.gain.setValueAtTime(0.85, t);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(masterGain);
+
+        noise.start(t);
+        noise.stop(t + 0.23);
+      }
+    }
+
+    function playHiHat(time) {
+      if (!initAudio()) return;
+      const t = time || audioCtx.currentTime;
+
+      if (noiseBuff) {
+        const noise  = audioCtx.createBufferSource();
+        const filter = audioCtx.createBiquadFilter();
+        const gain   = audioCtx.createGain();
+
+        noise.buffer = noiseBuff;
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(7500, t);
+
+        // Fast metallic sizzle
+        gain.gain.setValueAtTime(0.75, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.055);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(masterGain);
+
+        noise.start(t);
+        noise.stop(t + 0.06);
+      }
+    }
+
+    function playTom(time) {
+      if (!initAudio()) return;
+      const t = time || audioCtx.currentTime;
+
+      const osc  = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(130, t);
+      osc.frequency.exponentialRampToValueAtTime(55, t + 0.2);
+
+      gain.gain.setValueAtTime(0.9, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(t);
+      osc.stop(t + 0.33);
+    }
+
+    function playCrash(time) {
+      if (!initAudio()) return;
+      const t = time || audioCtx.currentTime;
+
+      if (noiseBuff) {
+        const noise  = audioCtx.createBufferSource();
+        const filter = audioCtx.createBiquadFilter();
+        const gain   = audioCtx.createGain();
+
+        noise.buffer = noiseBuff;
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(4500, t);
+
+        // Long splash decay
+        gain.gain.setValueAtTime(0.65, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(masterGain);
+
+        noise.start(t);
+        noise.stop(t + 1.25);
+      }
+    }
+
+    // ── Sound Dispatcher ───────────────────────────────────────────────────
+    const soundMap = {
+      kick:  playKick,
+      snare: playSnare,
+      hihat: playHiHat,
+      tom:   playTom,
+      crash: playCrash,
     };
 
-    // ── All queryable expressions ───────────────────────────────────────────
-    const COMMANDS = [
-      'engineer.name', 'engineer.role', 'engineer.company',
-      'engineer.experience', 'engineer.location',
-      'engineer.coreStack', 'engineer.passions', 'engineer.hobbies',
-      'Object.keys(engineer)', 'engineer', 'help', 'clear',
+    function triggerPad(sound, time) {
+      const fn = soundMap[sound];
+      if (fn) fn(time);
+
+      // Visual pad hit animation
+      const padEl = document.querySelector(`.drum-pad[data-sound="${sound}"]`);
+      if (padEl) {
+        padEl.classList.remove('drum-pad--active');
+        void padEl.offsetWidth; // force reflow for re-trigger
+        padEl.classList.add('drum-pad--active');
+        setTimeout(() => padEl.classList.remove('drum-pad--active'), 120);
+      }
+    }
+
+    // ── Pad Pointer / Click Listeners ───────────────────────────────────────
+    drumPads.forEach(pad => {
+      // Use pointerdown for zero tap latency on touch devices
+      pad.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        initAudio();
+        const sound = pad.getAttribute('data-sound');
+        triggerPad(sound);
+      });
+    });
+
+    // ── Keyboard Shortcuts ──────────────────────────────────────────────────
+    const keyMap = {
+      '1': 'kick',  'k': 'kick',  'K': 'kick',
+      '2': 'snare', 's': 'snare', 'S': 'snare',
+      '3': 'hihat', 'h': 'hihat', 'H': 'hihat',
+      '4': 'tom',   't': 'tom',   'T': 'tom',
+      '5': 'crash', 'c': 'crash', 'C': 'crash',
+    };
+
+    window.addEventListener('keydown', (e) => {
+      // Ignore key events when the user is typing in form fields
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) {
+        return;
+      }
+
+      if (keyMap[e.key]) {
+        e.preventDefault();
+        initAudio();
+        triggerPad(keyMap[e.key]);
+      } else if (e.key === ' ' && grooveBtn) {
+        // Spacebar toggles groove
+        e.preventDefault();
+        toggleGroove();
+      }
+    });
+
+    // ── Mute / Unmute ───────────────────────────────────────────────────────
+    if (muteBtn) {
+      muteBtn.addEventListener('click', () => {
+        initAudio();
+        isMuted = !isMuted;
+        if (masterGain) {
+          masterGain.gain.setValueAtTime(isMuted ? 0 : 0.85, audioCtx.currentTime);
+        }
+        muteBtn.classList.toggle('is-muted', isMuted);
+        muteBtn.setAttribute('aria-label', isMuted ? 'Unmute drum sound' : 'Mute drum sound');
+        muteBtn.innerHTML = isMuted
+          ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`
+          : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`;
+      });
+    }
+
+    // ── 16-Step Drum Groove Sequencer ────────────────────────────────────────
+    // 108 BPM rock/funk pocket beat with ghost fills
+    const GROOVE_BPM = 108;
+    const STEP_TIME  = (60 / GROOVE_BPM) / 4; // 16th note duration (~139ms)
+
+    // Beat map for 16 steps (step 0 to 15)
+    const grooveSteps = [
+      ['kick', 'hihat', 'crash'], // Step 0  (Beat 1 - accent)
+      [],                         // Step 1
+      ['hihat'],                  // Step 2  (8th note)
+      [],                         // Step 3
+      ['snare', 'hihat'],         // Step 4  (Beat 2)
+      [],                         // Step 5
+      ['hihat'],                  // Step 6  (8th note)
+      ['kick'],                   // Step 7  (syncopated upbeat kick)
+      ['kick', 'hihat'],          // Step 8  (Beat 3)
+      [],                         // Step 9
+      ['hihat'],                  // Step 10 (8th note)
+      ['tom'],                    // Step 11 (mid fill)
+      ['snare', 'hihat'],         // Step 12 (Beat 4)
+      [],                         // Step 13
+      ['hihat'],                  // Step 14 (8th note)
+      ['snare'],                  // Step 15 (ghost snare tap)
     ];
 
-    // ── Command history ─────────────────────────────────────────────────────
-    let history    = [];
-    let historyIdx = -1;
+    let isGroovePlaying  = false;
+    let currentStep      = 0;
+    let nextStepTime     = 0;
+    let scheduleInterval = null;
 
-    // ── Tab-switching (only works when expanded) ────────────────────────────
-    replTabs.forEach(tab => {
-      tab.addEventListener('click', (e) => {
-        if (!isExpanded) { e.stopPropagation(); expandRepl(); return; }
-        const target = tab.dataset.tab;
-        replTabs.forEach(t => {
-          t.classList.toggle('repl-tab--active', t === tab);
-          t.setAttribute('aria-selected', String(t === tab));
-        });
-        document.getElementById('panel-repl').classList.toggle('repl-panel--hidden',   target !== 'repl');
-        document.getElementById('panel-source').classList.toggle('repl-panel--hidden', target !== 'source');
-        if (target === 'repl') replInput.focus();
-      });
-    });
+    function scheduleGroove() {
+      // Lookahead scheduling using audioCtx.currentTime for rock-solid timing
+      while (nextStepTime < audioCtx.currentTime + 0.1) {
+        const sounds = grooveSteps[currentStep];
+        sounds.forEach(snd => triggerPad(snd, nextStepTime));
 
-    // ── Helpers ─────────────────────────────────────────────────────────────
-    function addLine(text, type, delay = 0) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          const div = document.createElement('div');
-          div.className = `repl-line repl-line--${type} repl-line--new`;
-          div.textContent = text;
-          replOutput.appendChild(div);
-          replOutput.scrollTop = replOutput.scrollHeight;
-          // Remove animation class after it plays so it doesn't retrigger
-          div.addEventListener('animationend', () => div.classList.remove('repl-line--new'), { once: true });
-          resolve(div);
-        }, delay);
-      });
-    }
-
-    function formatValue(val) {
-      if (Array.isArray(val)) {
-        const items = val.map(v => `  '${v}'`).join(',\n');
-        return { text: `[\n${items}\n]`, type: 'array' };
-      }
-      if (typeof val === 'object' && val !== null) {
-        const lines = Object.entries(val)
-          .map(([k, v]) => `  ${k}: ${JSON.stringify(v)}`)
-          .join(',\n');
-        return { text: `{\n${lines}\n}`, type: 'object' };
-      }
-      if (typeof val === 'string') return { text: `'${val}'`, type: 'string' };
-      if (typeof val === 'number') return { text: String(val), type: 'number' };
-      return { text: String(val), type: 'info' };
-    }
-
-    function clearOutput() {
-      replOutput.innerHTML = '';
-      addLine('// Output cleared.', 'comment');
-    }
-
-    function showHelp() {
-      const lines = [
-        '// Available expressions:',
-        '  engineer              → the full object',
-        '  engineer.name         → \'Krishnasankar\'',
-        '  engineer.role         → job title',
-        '  engineer.company      → employer',
-        '  engineer.experience   → years',
-        '  engineer.location     → city & country',
-        '  engineer.coreStack    → tech stack array',
-        '  engineer.passions     → creative projects',
-        '  engineer.hobbies      → life outside code',
-        '  Object.keys(engineer) → all property names',
-        '  clear                 → clear the output',
-        '',
-        '// Tip: press ↑/↓ to recall history, Tab to autocomplete.',
-      ];
-      lines.forEach((l, i) => {
-        const type = l.startsWith('//') ? 'comment' : l.startsWith('  //') ? 'comment' : 'help';
-        addLine(l, type, i * 30);
-      });
-    }
-
-    // ── Evaluate user input ─────────────────────────────────────────────────
-    function evaluate(raw) {
-      const cmd = raw.trim();
-      if (!cmd) return;
-
-      // Record to history
-      if (history[0] !== cmd) history.unshift(cmd);
-      if (history.length > 30) history.pop();
-      historyIdx = -1;
-
-      addLine(cmd, 'input');
-
-      if (cmd === 'clear') { clearOutput(); return; }
-      if (cmd === 'help')  { showHelp();    return; }
-
-      // Easter eggs
-      if (/^(hi|hello|hey)$/i.test(cmd)) {
-        addLine(`'Hey there! 👋 Try: engineer.name'`, 'string'); return;
-      }
-      if (/^(drums?|drumming|music)/i.test(cmd)) {
-        addLine(`'🥁 Check out @KrishnaDrums on YouTube!'`, 'string'); return;
-      }
-      if (/^(42|meaning of life)/i.test(cmd)) {
-        addLine(`42  // The answer to life, the universe, and everything.`, 'number'); return;
-      }
-      if (/^(rm\s+-rf|sudo|hack|exit)/i.test(cmd)) {
-        addLine(`Error: Nice try 😄  — this REPL is sandboxed!`, 'error'); return;
-      }
-      if (/^console\.log/i.test(cmd)) {
-        const inner = cmd.match(/console\.log\(["']?(.+?)["']?\)/)?.[1] ?? '...';
-        addLine(inner, 'info'); return;
-      }
-
-      // Resolve against engineer object
-      try {
-        let result;
-        const normalized = cmd
-          .replace(/^engineer\./, '')           // strip leading engineer.
-          .replace(/\[(\d+)\]/g, '[$1]');       // keep array access
-
-        if (cmd === 'engineer' || cmd === 'engineer;') {
-          result = engineer;
-        } else if (cmd === 'Object.keys(engineer)') {
-          result = Object.keys(engineer);
-        } else if (Object.prototype.hasOwnProperty.call(engineer, normalized.split('[')[0])) {
-          // Support: engineer.hobbies[0]
-          const propMatch = normalized.match(/^(\w+)(?:\[(\d+)\])?$/);
-          if (propMatch) {
-            const prop  = propMatch[1];
-            const idx   = propMatch[2] !== undefined ? Number(propMatch[2]) : undefined;
-            result      = idx !== undefined ? engineer[prop]?.[idx] : engineer[prop];
-          } else {
-            result = engineer[normalized];
-          }
-        } else {
-          throw new Error(`'${cmd}' is not defined`);
-        }
-
-        if (result === undefined) {
-          addLine('undefined', 'info');
-        } else {
-          const { text, type } = formatValue(result);
-          addLine(text, type);
-        }
-      } catch (err) {
-        addLine(`ReferenceError: ${err.message}`, 'error');
-        setTimeout(() => addLine('// Hint: type help for available commands.', 'comment'), 120);
+        nextStepTime += STEP_TIME;
+        currentStep = (currentStep + 1) % 16;
       }
     }
 
-    // ── Autocomplete ────────────────────────────────────────────────────────
-    let autocompleteEl = document.querySelector('.repl-autocomplete');
-    if (!autocompleteEl) {
-      autocompleteEl = document.createElement('span');
-      autocompleteEl.className = 'repl-autocomplete';
-      autocompleteEl.setAttribute('aria-hidden', 'true');
-      replInput.parentElement.appendChild(autocompleteEl);
+    function startGroove() {
+      initAudio();
+      isGroovePlaying = true;
+      currentStep = 0;
+      nextStepTime = audioCtx.currentTime + 0.05;
+
+      if (grooveBtn) {
+        grooveBtn.classList.add('is-playing');
+        grooveIcon.textContent = '⏹';
+        grooveText.textContent = 'Stop Groove';
+        grooveBtn.setAttribute('aria-label', 'Stop drum groove');
+      }
+
+      scheduleInterval = setInterval(scheduleGroove, 25);
     }
 
-    function getSuggestion(val) {
-      if (!val) return '';
-      const match = COMMANDS.find(c => c.startsWith(val) && c !== val);
-      return match ? match.slice(val.length) : '';
+    function stopGroove() {
+      isGroovePlaying = false;
+      if (scheduleInterval) {
+        clearInterval(scheduleInterval);
+        scheduleInterval = null;
+      }
+
+      if (grooveBtn) {
+        grooveBtn.classList.remove('is-playing');
+        grooveIcon.textContent = '▶';
+        grooveText.textContent = 'Play Groove';
+        grooveBtn.setAttribute('aria-label', 'Play automatic drum groove demo');
+      }
     }
 
-    replInput.addEventListener('input', () => {
-      autocompleteEl.textContent = getSuggestion(replInput.value);
-    });
-
-    // ── Keyboard handling ───────────────────────────────────────────────────
-    replInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const val = replInput.value;
-        autocompleteEl.textContent = '';
-        replInput.value = '';
-        evaluate(val);
+    function toggleGroove() {
+      if (isGroovePlaying) {
+        stopGroove();
+      } else {
+        startGroove();
       }
+    }
 
-      if (e.key === 'Tab') {
-        e.preventDefault();
-        const suggestion = getSuggestion(replInput.value);
-        if (suggestion) {
-          replInput.value += suggestion;
-          autocompleteEl.textContent = '';
-        }
-      }
-
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        if (historyIdx < history.length - 1) {
-          historyIdx++;
-          replInput.value = history[historyIdx];
-          autocompleteEl.textContent = getSuggestion(replInput.value);
-          // Move cursor to end
-          setTimeout(() => replInput.setSelectionRange(replInput.value.length, replInput.value.length), 0);
-        }
-      }
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        if (historyIdx > 0) {
-          historyIdx--;
-          replInput.value = history[historyIdx];
-        } else {
-          historyIdx = -1;
-          replInput.value = '';
-        }
-        autocompleteEl.textContent = getSuggestion(replInput.value);
-      }
-    });
-
-    // ── Hint chip clicks ────────────────────────────────────────────────────
-    replHints.forEach(btn => {
-      btn.addEventListener('click', () => {
-        replInput.value = btn.dataset.cmd;
-        autocompleteEl.textContent = '';
-        replInput.focus();
-        evaluate(btn.dataset.cmd);
-        replInput.value = '';
-      });
-    });
-
-    // ── Click anywhere in the output area focuses the input ────────────────
-    replOutput.addEventListener('click', () => replInput.focus());
-
-    // ── Auto-run a welcome demo after a short delay ─────────────────────────
-    setTimeout(() => {
-      if (replOutput.children.length <= 2) { // only if still showing welcome msgs
-        replInput.placeholder = 'engineer.name';
-      }
-    }, 1800);
+    if (grooveBtn) {
+      grooveBtn.addEventListener('click', toggleGroove);
+    }
   }
 
 });
-

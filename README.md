@@ -14,6 +14,7 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
 - 📱 **Fully Responsive**: Optimized for desktop, tablet, and mobile with an interactive navigation drawer.
 - ⚡ **Zero-Build Architecture**: Pure semantic HTML5, modern CSS3 variables, and vanilla JavaScript.
 - 💼 **Enterprise Background**: 10+ years of software engineering at Oracle Financial Services Software (OFSS).
+- 🥁 **Interactive Drum Pad & Beat Machine**: Playable Web Audio API synthesized drum kit (Kick, Snare, Hi-Hat, Tom, Crash) in the hero section with keyboard triggers (`1`-`5` / `K`, `S`, `H`, `T`, `C`), visual pad hit animations, and an autoplay groove demo.
 - 🥁 **Drumming & Music Showcase**: Responsive embedded YouTube playlist of drum covers from [@KrishnaDrums](https://www.youtube.com/@KrishnaDrums).
 - 🎲 **Hobbies & Lifestyle**: Board games, simulator gaming, poi spinning (flow arts), and scenic long drives.
 - 🚀 **Passion Projects Showcased**:
