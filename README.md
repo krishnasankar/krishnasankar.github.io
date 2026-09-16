@@ -15,6 +15,7 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
 - ⚡ **Zero-Build Architecture**: Pure semantic HTML5, modern CSS3 variables, and vanilla JavaScript.
 - 💼 **Enterprise Background**: 10+ years of software engineering at Oracle Financial Services Software (OFSS).
 - 🥁 **Drumming & Music Showcase**: Responsive embedded YouTube playlist of drum covers from [@KrishnaDrums](https://www.youtube.com/@KrishnaDrums).
+- 🎲 **Hobbies & Lifestyle**: Board games, simulator gaming, poi spinning (flow arts), and scenic long drives.
 - 🚀 **Passion Projects Showcased**:
   - **MonthlyExpenseTracker** (Flagship): Offline-first Android Java application with Jetpack Room persistence, category budgeting v2.0, interactive Canvas donut analytics, and home screen widget.
   - **NotePilot** (Flagship): Private AI notes assistant Android app integrating OpenRouter LLM completions, note context injection, autonomous function calling (`addOrUpdateNote`), safety confirmation diffs, voice recognition, and encrypted BYOK storage.
