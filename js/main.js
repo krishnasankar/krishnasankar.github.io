@@ -517,29 +517,50 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // ── 16-Step Drum Groove Sequencer ────────────────────────────────────────
-    // 108 BPM rock/funk pocket beat with ghost fills
-    const GROOVE_BPM = 108;
-    const STEP_TIME  = (60 / GROOVE_BPM) / 4; // 16th note duration (~139ms)
+    // ── Radiohead - "Creep" Drum Groove Sequencer ───────────────────────────
+    // Iconic verse beat at original song tempo (92 BPM)
+    const GROOVE_BPM = 92;
+    const STEP_TIME  = (60 / GROOVE_BPM) / 4; // 16th note duration (~163ms)
 
-    // Beat map for 16 steps (step 0 to 15)
+    // 2-Bar (32-step) loop of the classic verse groove from Radiohead's "Creep":
+    // Straight 8th-note closed hi-hats, snare backbeat on 2 & 4, and signature kick on 1, 3, and 3-&.
+    // Bar 1 starts with downbeat Crash + Kick; Bar 2 keeps the tight pocket rolling.
     const grooveSteps = [
-      ['kick', 'hihat', 'crash'], // Step 0  (Beat 1 - accent)
+      // ── Bar 1 ─────────────────────────────────────────────────────────────
+      ['kick', 'crash'],          // Step 0  [Beat 1] Downbeat Kick + Crash
       [],                         // Step 1
-      ['hihat'],                  // Step 2  (8th note)
+      ['hihat'],                  // Step 2  [1 &] Hi-Hat
       [],                         // Step 3
-      ['snare', 'hihat'],         // Step 4  (Beat 2)
+      ['snare', 'hihat'],         // Step 4  [Beat 2] Snare + Hi-Hat
       [],                         // Step 5
-      ['hihat'],                  // Step 6  (8th note)
-      ['kick'],                   // Step 7  (syncopated upbeat kick)
-      ['kick', 'hihat'],          // Step 8  (Beat 3)
+      ['hihat'],                  // Step 6  [2 &] Hi-Hat
+      [],                         // Step 7
+      ['kick', 'hihat'],          // Step 8  [Beat 3] Kick + Hi-Hat
       [],                         // Step 9
-      ['hihat'],                  // Step 10 (8th note)
-      ['tom'],                    // Step 11 (mid fill)
-      ['snare', 'hihat'],         // Step 12 (Beat 4)
+      ['kick', 'hihat'],          // Step 10 [3 &] Kick + Hi-Hat
+      [],                         // Step 11
+      ['snare', 'hihat'],         // Step 12 [Beat 4] Snare + Hi-Hat
       [],                         // Step 13
-      ['hihat'],                  // Step 14 (8th note)
-      ['snare'],                  // Step 15 (ghost snare tap)
+      ['hihat'],                  // Step 14 [4 &] Hi-Hat
+      [],                         // Step 15
+
+      // ── Bar 2 ─────────────────────────────────────────────────────────────
+      ['kick', 'hihat'],          // Step 16 [Beat 1] Kick + Hi-Hat
+      [],                         // Step 17
+      ['hihat'],                  // Step 18 [1 &] Hi-Hat
+      [],                         // Step 19
+      ['snare', 'hihat'],         // Step 20 [Beat 2] Snare + Hi-Hat
+      [],                         // Step 21
+      ['hihat'],                  // Step 22 [2 &] Hi-Hat
+      [],                         // Step 23
+      ['kick', 'hihat'],          // Step 24 [Beat 3] Kick + Hi-Hat
+      [],                         // Step 25
+      ['kick', 'hihat'],          // Step 26 [3 &] Kick + Hi-Hat
+      [],                         // Step 27
+      ['snare', 'hihat'],         // Step 28 [Beat 4] Snare + Hi-Hat
+      [],                         // Step 29
+      ['hihat'],                  // Step 30 [4 &] Hi-Hat
+      [],                         // Step 31
     ];
 
     let isGroovePlaying  = false;
@@ -554,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sounds.forEach(snd => triggerPad(snd, nextStepTime));
 
         nextStepTime += STEP_TIME;
-        currentStep = (currentStep + 1) % 16;
+        currentStep = (currentStep + 1) % grooveSteps.length;
       }
     }
 
@@ -585,7 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         grooveBtn.classList.remove('is-playing');
         grooveIcon.textContent = '▶';
         grooveText.textContent = 'Play Groove';
-        grooveBtn.setAttribute('aria-label', 'Play automatic drum groove demo');
+        grooveBtn.setAttribute('aria-label', 'Play Radiohead - Creep drum groove');
       }
     }
 
