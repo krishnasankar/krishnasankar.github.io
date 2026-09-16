@@ -157,9 +157,10 @@
 
         <!-- Interactive REPL Card -->
         <div class="hero__visual reveal reveal-delay-2">
-          <div class="code-card repl-card" role="region" aria-label="Interactive terminal — type commands to learn about Krishnasankar">
-            <!-- Tab bar -->
-            <div class="code-card__header">
+          <div class="code-card repl-card repl-card--collapsed" id="repl-card" role="region" aria-expanded="false" aria-label="Interactive terminal — click to expand">
+
+            <!-- Header (always visible) -->
+            <div class="code-card__header repl-card__header" id="repl-header">
               <span class="code-dot dot-red" aria-hidden="true"></span>
               <span class="code-dot dot-yellow" aria-hidden="true"></span>
               <span class="code-dot dot-green" aria-hidden="true"></span>
@@ -167,41 +168,46 @@
                 <button class="repl-tab repl-tab--active" role="tab" aria-selected="true"  data-tab="repl"   id="tab-repl">Terminal</button>
                 <button class="repl-tab"                  role="tab" aria-selected="false" data-tab="source" id="tab-source">Source</button>
               </div>
+              <span class="repl-expand-hint" aria-hidden="true">click to explore ↓</span>
             </div>
 
-            <!-- REPL / Terminal panel -->
-            <div class="repl-panel" id="panel-repl" role="tabpanel" aria-labelledby="tab-repl">
-              <div class="repl-output" id="repl-output" aria-live="polite" aria-atomic="false">
-                <div class="repl-line repl-line--comment">// 👋 Welcome! Query the engineer object.</div>
-                <div class="repl-line repl-line--comment">// Try: engineer.name · engineer.hobbies · help</div>
-              </div>
-              <div class="repl-input-row">
-                <span class="repl-prompt" aria-hidden="true">&gt;</span>
-                <input
-                  type="text"
-                  class="repl-input"
-                  id="repl-input"
-                  autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="off"
-                  spellcheck="false"
-                  placeholder="engineer.name"
-                  aria-label="Type a JavaScript expression to query the engineer object"
-                  maxlength="80"
-                >
-              </div>
-              <div class="repl-hints" aria-label="Quick command suggestions">
-                <button class="repl-hint" data-cmd="engineer.name">.name</button>
-                <button class="repl-hint" data-cmd="engineer.coreStack">.coreStack</button>
-                <button class="repl-hint" data-cmd="engineer.passions">.passions</button>
-                <button class="repl-hint" data-cmd="engineer.hobbies">.hobbies</button>
-                <button class="repl-hint" data-cmd="help">help</button>
-              </div>
-            </div>
+            <!-- Collapsible body -->
+            <div class="repl-body" id="repl-body">
 
-            <!-- Source panel -->
-            <div class="repl-panel repl-panel--hidden" id="panel-source" role="tabpanel" aria-labelledby="tab-source">
-              <pre class="code-card__body"><code><span class="code-keyword">const</span> <span class="code-variable">engineer</span> = <span class="code-bracket">{</span>
+              <!-- Terminal panel -->
+              <div class="repl-panel" id="panel-repl" role="tabpanel" aria-labelledby="tab-repl">
+                <div class="repl-output" id="repl-output" aria-live="polite" aria-atomic="false">
+                  <div class="repl-line repl-line--comment">// 👋 Welcome! Query the engineer object.</div>
+                  <div class="repl-line repl-line--comment">// Try: engineer.name · engineer.hobbies · help</div>
+                </div>
+                <div class="repl-input-row">
+                  <span class="repl-prompt" aria-hidden="true">&gt;</span>
+                  <input
+                    type="text"
+                    class="repl-input"
+                    id="repl-input"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    placeholder="engineer.name"
+                    aria-label="Type a JavaScript expression to query the engineer object"
+                    maxlength="80"
+                    tabindex="-1"
+                  >
+                </div>
+                <div class="repl-hints" aria-label="Quick command suggestions">
+                  <button class="repl-hint" data-cmd="engineer.name"     tabindex="-1">.name</button>
+                  <button class="repl-hint" data-cmd="engineer.coreStack" tabindex="-1">.coreStack</button>
+                  <button class="repl-hint" data-cmd="engineer.passions" tabindex="-1">.passions</button>
+                  <button class="repl-hint" data-cmd="engineer.hobbies"  tabindex="-1">.hobbies</button>
+                  <button class="repl-hint" data-cmd="help"              tabindex="-1">help</button>
+                </div>
+              </div>
+
+              <!-- Source panel -->
+              <div class="repl-panel repl-panel--hidden" id="panel-source" role="tabpanel" aria-labelledby="tab-source">
+                <pre class="code-card__body"><code><span class="code-keyword">const</span> <span class="code-variable">engineer</span> = <span class="code-bracket">{</span>
   <span class="code-prop">name</span>:        <span class="code-string">'Krishnasankar'</span>,
   <span class="code-prop">role</span>:        <span class="code-string">'Senior Software Engineer'</span>,
   <span class="code-prop">company</span>:    <span class="code-string">'Oracle (OFSS)'</span>,
@@ -221,8 +227,10 @@
     <span class="code-string">'Long Drives'</span>
   <span class="code-bracket">]</span>
 <span class="code-bracket">}</span>;</code></pre>
-            </div>
-          </div>
+              </div>
+
+            </div><!-- /.repl-body -->
+          </div><!-- /.repl-card -->
         </div>
       </div>
     </section>

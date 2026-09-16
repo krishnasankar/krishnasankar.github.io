@@ -230,8 +230,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const replOutput   = document.getElementById('repl-output');
   const replHints    = document.querySelectorAll('.repl-hint');
   const replTabs     = document.querySelectorAll('.repl-tab');
+  const replCard     = document.getElementById('repl-card');
+  const replHeader   = document.getElementById('repl-header');
 
-  if (replInput && replOutput) {
+  if (replInput && replOutput && replCard) {
+
+    // ── Expand / Collapse ───────────────────────────────────────────────────
+    let isExpanded = false;
+
+    function expandRepl() {
+      if (isExpanded) return;
+      isExpanded = true;
+      replCard.classList.remove('repl-card--collapsed');
+      replCard.setAttribute('aria-expanded', 'true');
+      replCard.setAttribute('aria-label', 'Interactive terminal — type commands to learn about Krishnasankar');
+      // Restore tab order for inner controls
+      replInput.removeAttribute('tabindex');
+      replHints.forEach(btn => btn.removeAttribute('tabindex'));
+      // Focus input after transition completes (~350ms)
+      setTimeout(() => replInput.focus(), 360);
+    }
+
+    // Click anywhere on the collapsed card header to expand
+    replHeader.addEventListener('click', expandRepl);
+
+    // Also expand when the card itself receives keyboard focus while collapsed
+    replCard.addEventListener('focusin', () => {
+      if (!isExpanded) expandRepl();
+    });
 
     // ── Data model ─────────────────────────────────────────────────────────
     const engineer = {
@@ -257,9 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let history    = [];
     let historyIdx = -1;
 
-    // ── Tab-switching ───────────────────────────────────────────────────────
+    // ── Tab-switching (only works when expanded) ────────────────────────────
     replTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
+      tab.addEventListener('click', (e) => {
+        if (!isExpanded) { e.stopPropagation(); expandRepl(); return; }
         const target = tab.dataset.tab;
         replTabs.forEach(t => {
           t.classList.toggle('repl-tab--active', t === tab);
