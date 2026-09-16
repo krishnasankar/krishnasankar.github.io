@@ -95,14 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
-     5. CONTACT FORM HANDLER
+     5. CONTACT FORM HANDLER (Web3Forms)
      ========================================================================== */
   const contactForm = document.getElementById('contact-form');
   const formStatus = document.getElementById('form-status');
   const submitBtn = document.getElementById('submit-btn');
 
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const name = document.getElementById('name').value.trim();
@@ -115,27 +115,55 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      const formData = new FormData(contactForm);
+      const object = Object.fromEntries(formData);
+
+      if (object.access_key === 'YOUR_ACCESS_KEY_HERE') {
+        formStatus.textContent = 'Please add your Web3Forms Access Key in index.html to receive messages.';
+        formStatus.className = 'form-status error';
+        return;
+      }
+
       // Feedback animation for user
       const originalBtnText = submitBtn.innerHTML;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span>Sending...</span>';
       formStatus.textContent = '';
+      formStatus.className = 'form-status';
 
-      // Simulate sending (or forward to mailto fallback)
-      setTimeout(() => {
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(object)
+        });
+
+        const result = await response.json();
+
+        if (response.status === 200 && result.success) {
+          formStatus.textContent = 'Thank you! Your message has been sent successfully.';
+          formStatus.className = 'form-status success';
+          contactForm.reset();
+        } else {
+          formStatus.textContent = result.message || 'Something went wrong. Please try again.';
+          formStatus.className = 'form-status error';
+        }
+      } catch (error) {
+        formStatus.textContent = 'Oops! There was a network error sending your message.';
+        formStatus.className = 'form-status error';
+      } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
 
-        formStatus.textContent = 'Thank you! Your message has been sent successfully.';
-        formStatus.className = 'form-status success';
-        contactForm.reset();
-
-        // Clear status message after 5 seconds
+        // Clear status message after 6 seconds
         setTimeout(() => {
           formStatus.textContent = '';
           formStatus.className = 'form-status';
-        }, 5000);
-      }, 800);
+        }, 6000);
+      }
     });
   }
 });

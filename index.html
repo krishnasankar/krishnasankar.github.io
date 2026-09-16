@@ -675,7 +675,14 @@
           </div>
 
           <div class="contact__form-container">
-            <form class="contact__form" id="contact-form">
+            <form class="contact__form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+              <!-- Web3Forms Access Key -->
+              <input type="hidden" name="access_key" value="3c30a301-7ce2-4bb7-b2bf-eabce7e40ec2">
+              <input type="hidden" name="subject" value="New Message from Portfolio Website">
+              <input type="hidden" name="from_name" value="Portfolio Contact Form">
+              <!-- Honeypot Spam Protection -->
+              <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
               <div class="form-group">
                 <label for="name" class="form-label">Your Name</label>
                 <input type="text" id="name" name="name" class="form-input" placeholder="e.g. Alex Smith" required>
