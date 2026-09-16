@@ -1,8 +1,8 @@
-# 🌐 Krishnasankar - Senior Software Engineer & Portfolio
+# 🌐 Krishnasankar - Senior Software Engineer, Drummer & Portfolio
 
-A modern, responsive portfolio website for **Krishnasankar** ([@krishnasankar](https://github.com/krishnasankar)), Senior Software Engineer at **Oracle (OFSS)** with 10+ years of experience based in Bengaluru, India.
+A modern, responsive portfolio website for **Krishnasankar** ([@krishnasankar](https://github.com/krishnasankar)), Senior Software Engineer at **Oracle (OFSS)** with 10+ years of experience based in Bengaluru, India, and an avid drummer uploading drum covers at **[@KrishnaDrums](https://www.youtube.com/@KrishnaDrums)**.
 
-Showcases enterprise engineering in **Core Java**, **Spring Boot**, **Oracle SQL**, and **UI**, alongside creative passion projects built for fun including **[MonthlyExpenseTracker](https://github.com/krishnasankar/MonthlyExpenseTracker)** (Android/Room) and **[NotePilot](https://github.com/krishnasankar/NotePilot)** (Android/AI Assistant).
+Showcases enterprise engineering in **Core Java**, **Spring Boot**, **Oracle SQL**, and **UI**, alongside creative passion projects built for fun including **[MonthlyExpenseTracker](https://github.com/krishnasankar/MonthlyExpenseTracker)** (Android/Room), **[NotePilot](https://github.com/krishnasankar/NotePilot)** (Android/AI Assistant), and embedded **YouTube Drum Covers**!
 
 Zero build dependencies required — ready to be hosted immediately on **GitHub Pages** with free HTTPS!
 
@@ -14,6 +14,7 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
 - 📱 **Fully Responsive**: Optimized for desktop, tablet, and mobile with an interactive navigation drawer.
 - ⚡ **Zero-Build Architecture**: Pure semantic HTML5, modern CSS3 variables, and vanilla JavaScript.
 - 💼 **Enterprise Background**: 10+ years of software engineering at Oracle Financial Services Software (OFSS).
+- 🥁 **Drumming & Music Showcase**: Responsive embedded YouTube playlist of drum covers from [@KrishnaDrums](https://www.youtube.com/@KrishnaDrums).
 - 🚀 **Passion Projects Showcased**:
   - **MonthlyExpenseTracker** (Flagship): Offline-first Android Java application with Jetpack Room persistence, category budgeting v2.0, interactive Canvas donut analytics, and home screen widget.
   - **NotePilot** (Flagship): Private AI notes assistant Android app integrating OpenRouter LLM completions, note context injection, autonomous function calling (`addOrUpdateNote`), safety confirmation diffs, voice recognition, and encrypted BYOK storage.
@@ -22,6 +23,7 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
 - 📬 **Direct Contact & Socials**:
   - Email: `krishnasankar15@gmail.com`
   - GitHub: [github.com/krishnasankar](https://github.com/krishnasankar)
+  - YouTube: [@KrishnaDrums](https://www.youtube.com/@KrishnaDrums)
   - Instagram: [@krishna.sankar](https://www.instagram.com/krishna.sankar)
   - Location: Bengaluru, India
 

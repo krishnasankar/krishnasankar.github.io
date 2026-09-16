@@ -816,6 +816,101 @@ button {
   color: #f59e0b;
 }
 
+/* ==========================================================================
+   MUSIC & DRUM COVERS SECTION
+   ========================================================================== */
+.music {
+  background-color: var(--bg-primary);
+}
+
+.music__container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.video-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.video-card:hover {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 12px 30px -4px rgba(239, 68, 68, 0.2);
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background-color: #000;
+  box-shadow: var(--shadow-md);
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-card__info {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.video-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.video-card__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.video-card__description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.btn--youtube {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: #ef4444;
+  color: #ffffff;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn--youtube:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.45);
+}
 
 /* ==========================================================================
    EXPERIENCE / TIMELINE SECTION
