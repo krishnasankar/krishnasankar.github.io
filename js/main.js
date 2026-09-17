@@ -966,5 +966,233 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initHeroInteractiveText();
 
+  /* ==========================================================================
+     10. SKILLS BOX GRAVITY COLLAPSE ON HOVER (ALL BOXES)
+     ========================================================================== */
+  const initSkillsGravity = () => {
+    const categories = document.querySelectorAll('.skills__category');
+    if (categories.length === 0) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    categories.forEach((categoryBox) => {
+      const skillsList = categoryBox.querySelector('.skills__list');
+      if (!skillsList) return;
+
+      const tags = Array.from(skillsList.querySelectorAll('.skill-tag'));
+      const N = tags.length;
+      if (N === 0) return;
+
+      let isFallen = false;
+      let animFrameId = null;
+      let restoreTimeout = null;
+      let tagsData = [];
+
+      const xPattern   = [-28, 28, 0, -35, 35, -5, -20, 20, 0];
+      const rotPattern = [-4, 6, -7, 10, -9, 8, -12, 11, -3];
+
+      const triggerFall = () => {
+        if (isFallen) return;
+        isFallen = true;
+
+        if (restoreTimeout) {
+          clearTimeout(restoreTimeout);
+          restoreTimeout = null;
+        }
+        if (animFrameId) {
+          cancelAnimationFrame(animFrameId);
+          animFrameId = null;
+        }
+
+        categoryBox.classList.add('gravity-active');
+
+        if (prefersReducedMotion) {
+          tags.forEach((tag, idx) => {
+            const progress = N - 1 - idx;
+            const tier = progress < 3 ? 0 : (progress < 6 ? 22 : 44);
+            const xShift = xPattern[progress % xPattern.length];
+            const rot = rotPattern[progress % rotPattern.length];
+            tag.style.transition = 'transform 0.4s ease';
+            tag.style.transform = `translate3d(${xShift}px, ${30 + tier * 0.3}px, 0) rotate(${rot * 0.5}deg)`;
+          });
+          return;
+        }
+
+        // Measure live box boundaries
+        const boxRect = categoryBox.getBoundingClientRect();
+        const computedStyle = window.getComputedStyle(categoryBox);
+        const paddingBottom = parseFloat(computedStyle.paddingBottom) || 28;
+        const floorY = boxRect.bottom - paddingBottom;
+        const boxCenterX = boxRect.left + boxRect.width / 2;
+
+        const now = performance.now();
+        tagsData = tags.map((tag, idx) => {
+          const rect = tag.getBoundingClientRect();
+          const progress = N - 1 - idx;
+
+          const tier = progress < 3 ? 0 : (progress < 6 ? 22 : (progress < 8 ? 44 : 52));
+          const delay = progress * 22; // bottom tags drop first
+          const xShift = xPattern[progress % xPattern.length];
+          const targetRot = rotPattern[progress % rotPattern.length];
+
+          const targetY = (floorY - tier) - rect.bottom;
+          const tagCenterX = rect.left + rect.width / 2;
+          const targetX = (boxCenterX - tagCenterX) * 0.4 + xShift;
+
+          tag.style.transition = 'none';
+          tag.style.willChange = 'transform';
+          tag.style.zIndex = String(10 + (N - 1 - idx));
+
+          return {
+            el: tag,
+            idx,
+            targetX,
+            targetY,
+            targetRot,
+            delay,
+            x: 0,
+            y: 0,
+            rot: 0,
+            vy: 0,
+            bounces: 0,
+            settled: false
+          };
+        });
+
+        const gravity = 3200; // px/s^2 for tactile, responsive drop
+        let lastTime = performance.now();
+
+        const physicsStep = (time) => {
+          if (!isFallen) return;
+
+          const dt = Math.min((time - lastTime) / 1000, 0.033);
+          lastTime = time;
+          const elapsed = time - now;
+
+          let allSettled = true;
+
+          tagsData.forEach((item) => {
+            if (elapsed < item.delay) {
+              allSettled = false;
+              return;
+            }
+
+            if (item.settled) return;
+
+            allSettled = false;
+
+            // Gravity acceleration
+            item.vy += gravity * dt;
+            item.y += item.vy * dt;
+
+            // Smooth interpolation towards pile slot
+            item.x += (item.targetX - item.x) * Math.min(1, 15 * dt);
+            item.rot += (item.targetRot - item.rot) * Math.min(1, 14 * dt);
+
+            // Floor collision check
+            if (item.y >= item.targetY) {
+              item.y = item.targetY;
+              if (item.bounces < 2 && Math.abs(item.vy) > 120) {
+                item.vy = -item.vy * 0.28;
+                item.bounces++;
+              } else {
+                item.vy = 0;
+                item.x = item.targetX;
+                item.rot = item.targetRot;
+                item.settled = true;
+              }
+            }
+
+            item.el.style.transform = `translate3d(${item.x.toFixed(1)}px, ${item.y.toFixed(1)}px, 0) rotate(${item.rot.toFixed(1)}deg)`;
+          });
+
+          if (!allSettled) {
+            animFrameId = requestAnimationFrame(physicsStep);
+          } else {
+            animFrameId = null;
+          }
+        };
+
+        animFrameId = requestAnimationFrame(physicsStep);
+      };
+
+      const triggerRestore = () => {
+        if (!isFallen) return;
+        isFallen = false;
+
+        if (animFrameId) {
+          cancelAnimationFrame(animFrameId);
+          animFrameId = null;
+        }
+
+        categoryBox.classList.remove('gravity-active');
+
+        // Staggered magnetic spring return
+        tags.forEach((tag, idx) => {
+          const returnDelay = idx * 22;
+          tag.style.transition = `transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) ${returnDelay}ms`;
+          tag.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+        });
+
+        const totalReturnTime = 480 + (tags.length * 22) + 60;
+        restoreTimeout = setTimeout(() => {
+          tags.forEach((tag) => {
+            tag.style.transition = '';
+            tag.style.transform = '';
+            tag.style.zIndex = '';
+            tag.style.willChange = '';
+          });
+          restoreTimeout = null;
+        }, totalReturnTime);
+      };
+
+      // Desktop hover
+      categoryBox.addEventListener('mouseenter', triggerFall);
+      categoryBox.addEventListener('mouseleave', triggerRestore);
+
+      // Mobile / touch tap toggling
+      categoryBox.addEventListener('click', () => {
+        if (window.matchMedia('(hover: none)').matches) {
+          if (isFallen) {
+            triggerRestore();
+          } else {
+            triggerFall();
+          }
+        }
+      });
+
+      // Tap outside to restore
+      document.addEventListener('pointerdown', (e) => {
+        if (isFallen && !categoryBox.contains(e.target)) {
+          triggerRestore();
+        }
+      });
+
+      // Micro-interaction: playful nudge on fallen tiles
+      tags.forEach((tag) => {
+        tag.addEventListener('mouseenter', () => {
+          if (isFallen && !animFrameId) {
+            const item = tagsData.find(d => d.el === tag);
+            if (item && item.settled) {
+              tag.style.transition = 'transform 0.15s ease-out';
+              tag.style.transform = `translate3d(${item.targetX}px, ${(item.targetY - 8).toFixed(1)}px, 0) rotate(${(item.targetRot * 1.3).toFixed(1)}deg) scale(1.05)`;
+            }
+          }
+        });
+        tag.addEventListener('mouseleave', () => {
+          if (isFallen && !animFrameId) {
+            const item = tagsData.find(d => d.el === tag);
+            if (item && item.settled) {
+              tag.style.transition = 'transform 0.2s ease-out';
+              tag.style.transform = `translate3d(${item.targetX}px, ${item.targetY.toFixed(1)}px, 0) rotate(${item.targetRot.toFixed(1)}deg) scale(1)`;
+            }
+          }
+        });
+      });
+    });
+  };
+
+  initSkillsGravity();
+
 });
 

@@ -1638,12 +1638,39 @@ button:focus-visible {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   border-left: 3px solid var(--accent);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  min-height: 295px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 .skills__category:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
+}
+
+.skills__category::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.skills__category.gravity-active {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: var(--shadow-md), 0 0 15px rgba(99, 102, 241, 0.12);
+}
+
+.skills__category.gravity-active::after {
+  opacity: 1;
 }
 
 .skills__category-title {
@@ -1661,10 +1688,16 @@ button:focus-visible {
   flex-shrink: 0;
 }
 
+.skills__category .skill-tag {
+  transform-origin: center center;
+}
+
 .skills__list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  flex-grow: 1;
+  align-content: flex-start;
 }
 
 .skill-tag {
