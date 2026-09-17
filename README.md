@@ -18,8 +18,8 @@ Zero build dependencies required — ready to be hosted immediately on **GitHub 
 - 🥁 **Drumming & Music Showcase**: Responsive embedded YouTube playlist of drum covers from [@KrishnaDrums](https://www.youtube.com/@KrishnaDrums).
 - 🎲 **Hobbies & Lifestyle**: Board/card games, video games, and poi spinning (flow arts).
 - 🚀 **Passion Projects Showcased**:
-  - **MonthlyExpenseTracker** (Flagship): Offline-first Android Java application with Jetpack Room persistence, category budgeting v2.0, interactive Canvas donut analytics, and home screen widget.
-  - **NotePilot** (Flagship): Private AI notes assistant Android app integrating OpenRouter LLM completions, note context injection, autonomous function calling (`addOrUpdateNote`), safety confirmation diffs, voice recognition, and encrypted BYOK storage.
+  - **MonthlyExpenseTracker** (Flagship): Offline-first Android Java application with Jetpack Room persistence, category budgeting v2.0, interactive Canvas donut analytics, and home screen widget. ([Repository](https://github.com/krishnasankar/MonthlyExpenseTracker) · [Download APK](https://github.com/krishnasankar/MonthlyExpenseTracker/releases/download/v2.0.0/MonthlyExpenseTracker-v2.0.apk))
+  - **NotePilot** (Flagship): Private AI notes assistant Android app integrating OpenRouter LLM completions, note context injection, autonomous function calling (`addOrUpdateNote`), safety confirmation diffs, voice recognition, and encrypted BYOK storage. ([Repository](https://github.com/krishnasankar/NotePilot) · [Download APK](https://github.com/krishnasankar/NotePilot/releases/download/v3.0/NotePilot-v3.0.apk))
   - **Developer Portfolio** (`krishnasankar.github.io`): Fast, responsive personal portfolio website hosted on GitHub Pages.
   - **ghost** (Minor / Arcade): 2D retro arcade game and reusable extension built with Microsoft MakeCode Arcade and TypeScript.
 - 📬 **Direct Contact & Socials**:
