@@ -698,5 +698,273 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ==========================================================================
+     11. HERO INTERACTIVE TEXT & LIVE HTML EDITOR
+     - Enlarged custom cursor appears when hovering over hero text
+     - Double-click reveals actual HTML version with tags and styles
+     - Edit format/styles and press Tab or click outside to commit changes
+     - Esc cancels edit; "Reset Original" button restores default text
+     ========================================================================== */
+  const initHeroInteractiveText = () => {
+    const heroContent = document.querySelector('.hero__content');
+    if (!heroContent) return;
+
+    // Cache of original outerHTML snippets by element identity for resetting
+    const originalSnippets = new WeakMap();
+
+    // Currently open editor state
+    let activeEditor = null;
+
+    // Check hover capability
+    const isHoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    // Create the enlarged custom cursor element
+    let heroCursor = document.getElementById('hero-cursor');
+    if (!heroCursor && isHoverCapable) {
+      heroCursor = document.createElement('div');
+      heroCursor.className = 'hero-cursor';
+      heroCursor.id = 'hero-cursor';
+      heroCursor.setAttribute('aria-hidden', 'true');
+      heroCursor.innerHTML = `
+        <span class="hero-cursor__glyph">&lt;/&gt;</span>
+        <span class="hero-cursor__badge">Double-click to edit</span>
+      `;
+      document.body.appendChild(heroCursor);
+
+      // Track cursor position and hover status
+      window.addEventListener('pointermove', (e) => {
+        heroCursor.style.left = `${e.clientX}px`;
+        heroCursor.style.top = `${e.clientY}px`;
+
+        if (activeEditor) {
+          heroCursor.classList.remove('is-active');
+          return;
+        }
+
+        const interactiveEl = e.target.closest('.hero-interactive-text');
+        if (interactiveEl && heroContent.contains(interactiveEl)) {
+          heroCursor.classList.add('is-active');
+        } else {
+          heroCursor.classList.remove('is-active');
+        }
+      });
+
+      // Quick scale punch on click
+      window.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.hero-interactive-text')) {
+          heroCursor.classList.add('is-clicked');
+        }
+      });
+
+      window.addEventListener('pointerup', () => {
+        heroCursor.classList.remove('is-clicked');
+      });
+
+      document.addEventListener('mouseleave', () => {
+        heroCursor.classList.remove('is-active');
+      });
+    }
+
+    // Helper to auto-resize textarea height to its content
+    const autoResizeTextarea = (ta) => {
+      ta.style.height = 'auto';
+      ta.style.height = `${Math.max(68, ta.scrollHeight + 4)}px`;
+    };
+
+    // Helper to open the live HTML editor on an interactive element
+    const openEditor = (targetElement) => {
+      // If already editing, close previous
+      if (activeEditor) {
+        if (activeEditor.originalElement === targetElement) return;
+        activeEditor.commit();
+      }
+
+      // Hide custom cursor during editing
+      if (heroCursor) heroCursor.classList.remove('is-active');
+
+      // Save initial HTML for this element if not already saved
+      if (!originalSnippets.has(targetElement)) {
+        originalSnippets.set(targetElement, targetElement.outerHTML);
+      }
+
+      const initialHtml = targetElement.outerHTML;
+
+      // Create editor container
+      const editorContainer = document.createElement('div');
+      editorContainer.className = 'hero-editor-container';
+
+      editorContainer.innerHTML = `
+        <div class="hero-editor-header">
+          <span class="hero-editor-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            HTML Code Editor
+          </span>
+          <span class="hero-editor-tips">Press <kbd>Tab</kbd> or click outside to apply · <kbd>Esc</kbd> to cancel</span>
+        </div>
+        <textarea class="hero-html-editor" spellcheck="false" aria-label="Edit HTML code"></textarea>
+        <div class="hero-editor-footer">
+          <button type="button" class="hero-editor-btn hero-editor-btn--reset" title="Restore original text before edits">↺ Reset Original</button>
+          <button type="button" class="hero-editor-btn hero-editor-btn--cancel">Cancel</button>
+          <button type="button" class="hero-editor-btn hero-editor-btn--apply">✓ Apply</button>
+        </div>
+      `;
+
+      const textarea = editorContainer.querySelector('.hero-html-editor');
+      const resetBtn = editorContainer.querySelector('.hero-editor-btn--reset');
+      const cancelBtn = editorContainer.querySelector('.hero-editor-btn--cancel');
+      const applyBtn = editorContainer.querySelector('.hero-editor-btn--apply');
+
+      textarea.value = initialHtml.trim();
+
+      // Insert editor before target and temporarily hide target
+      targetElement.style.display = 'none';
+      targetElement.parentNode.insertBefore(editorContainer, targetElement);
+
+      autoResizeTextarea(textarea);
+
+      let isFinished = false;
+
+      const cleanupListeners = () => {
+        document.removeEventListener('pointerdown', onDocumentPointerDown, true);
+        activeEditor = null;
+      };
+
+      const cancelEdit = () => {
+        if (isFinished) return;
+        isFinished = true;
+        cleanupListeners();
+        editorContainer.remove();
+        targetElement.style.display = '';
+      };
+
+      const commitEdit = () => {
+        if (isFinished) return;
+        isFinished = true;
+        cleanupListeners();
+
+        const rawVal = textarea.value.trim();
+        if (!rawVal) {
+          editorContainer.remove();
+          targetElement.style.display = '';
+          return;
+        }
+
+        // Parse HTML
+        const temp = document.createElement('div');
+        temp.innerHTML = rawVal;
+
+        // If user provided a single root HTML tag (e.g. <h1...> or <p...> or <div...>)
+        if (temp.children.length === 1 && rawVal.startsWith('<') && rawVal.endsWith('>')) {
+          const newEl = temp.firstElementChild;
+          // Ensure new element retains interactive class and title
+          newEl.classList.add('hero-interactive-text');
+          newEl.setAttribute('data-hero-interactive', 'true');
+          if (!newEl.hasAttribute('title')) {
+            newEl.setAttribute('title', 'Double click to edit HTML');
+          }
+
+          // Transfer original snippet cache to new element
+          const originalSnippet = originalSnippets.get(targetElement) || initialHtml;
+          originalSnippets.set(newEl, originalSnippet);
+
+          editorContainer.replaceWith(newEl);
+          targetElement.remove();
+
+          // Flash success animation
+          newEl.classList.add('hero-flash-success');
+          setTimeout(() => newEl.classList.remove('hero-flash-success'), 900);
+        } else {
+          // User edited inner HTML or plain text
+          targetElement.innerHTML = rawVal;
+          editorContainer.remove();
+          targetElement.style.display = '';
+
+          // Flash success animation
+          targetElement.classList.add('hero-flash-success');
+          setTimeout(() => targetElement.classList.remove('hero-flash-success'), 900);
+        }
+      };
+
+      // Outside boundary click handler
+      const onDocumentPointerDown = (e) => {
+        if (!editorContainer.contains(e.target)) {
+          commitEdit();
+        }
+      };
+
+      // Bind active editor record
+      activeEditor = {
+        container: editorContainer,
+        originalElement: targetElement,
+        commit: commitEdit,
+        cancel: cancelEdit,
+      };
+
+      // Listen for outside clicks after slight tick to prevent trigger from current dblclick
+      setTimeout(() => {
+        document.addEventListener('pointerdown', onDocumentPointerDown, true);
+      }, 50);
+
+      // Textarea keyboard shortcuts: Tab / Shift+Tab / Esc / Ctrl+Enter
+      textarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          commitEdit();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          cancelEdit();
+        } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          commitEdit();
+        }
+      });
+
+      // Auto-resize on typing
+      textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+
+      // Button event listeners
+      cancelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cancelEdit();
+      });
+
+      applyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        commitEdit();
+      });
+
+      resetBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const orig = originalSnippets.get(targetElement);
+        if (orig) {
+          textarea.value = orig.trim();
+          autoResizeTextarea(textarea);
+        }
+      });
+
+      // Focus textarea
+      setTimeout(() => {
+        textarea.focus();
+      }, 20);
+    };
+
+    // Event delegation on hero content for double-click
+    heroContent.addEventListener('dblclick', (e) => {
+      // Don't trigger if inside an already open editor
+      if (e.target.closest('.hero-editor-container')) return;
+
+      const interactiveTarget = e.target.closest('.hero-interactive-text');
+      if (interactiveTarget && heroContent.contains(interactiveTarget)) {
+        e.preventDefault();
+        openEditor(interactiveTarget);
+      }
+    });
+  };
+
+  initHeroInteractiveText();
+
 });
 
