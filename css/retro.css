@@ -1,0 +1,783 @@
+/* ==========================================================================
+   KRISHNASANKAR.EXE — 8-BIT RETRO GAME MODE STYLESHEET
+   Scoped under [data-mode="retro"] to guarantee zero style bleed into normal mode.
+   ========================================================================== */
+
+/* ── Retro Custom Properties & Theme Token Overrides ─────────────────────── */
+[data-mode="retro"] {
+  --retro-font-title: 'Press Start 2P', monospace, sans-serif;
+  --retro-font-term: 'VT323', monospace, monospace;
+
+  /* Arcade CRT Phosphor & Neon Palette */
+  --bg-primary: #080914;
+  --bg-secondary: #0e1124;
+  --bg-card: #121630;
+  --bg-card-hover: #1b2144;
+  --border-color: #2b3366;
+  --border-focus: #00ffff;
+
+  --text-primary: #f0f6fc;
+  --text-secondary: #00ffcc;
+  --text-muted: #7987b5;
+
+  --accent: #00ffff;
+  --accent-hover: #39ff14;
+  --accent-light: rgba(0, 255, 255, 0.12);
+  --accent-gradient: linear-gradient(90deg, #ff007f 0%, #00ffff 50%, #39ff14 100%);
+  --accent-gradient-subtle: linear-gradient(90deg, rgba(255,0,127,0.15) 0%, rgba(0,255,255,0.15) 100%);
+
+  --retro-green: #39ff14;
+  --retro-cyan: #00ffff;
+  --retro-magenta: #ff007f;
+  --retro-yellow: #ffe600;
+  --retro-amber: #ff9900;
+  --retro-blue: #3b82f6;
+
+  --shadow-sm: 2px 2px 0px #000;
+  --shadow-md: 4px 4px 0px #000;
+  --shadow-lg: 6px 6px 0px #000;
+  --shadow-accent: 0 0 12px rgba(0, 255, 255, 0.45);
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-full: 0px;
+
+  /* Pixelated crisp image rendering */
+  image-rendering: pixelated;
+}
+
+/* ── Typography & Global Overrides in Retro Mode ──────────────────────────── */
+[data-mode="retro"] body {
+  font-family: var(--retro-font-term);
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+[data-mode="retro"] h1,
+[data-mode="retro"] h2,
+[data-mode="retro"] h3,
+[data-mode="retro"] h4,
+[data-mode="retro"] .nav__logo,
+[data-mode="retro"] .section__title,
+[data-mode="retro"] .project-card__title,
+[data-mode="retro"] .hero__title,
+[data-mode="retro"] .btn,
+[data-mode="retro"] .theme-toggle,
+[data-mode="retro"] .drum-pad,
+[data-mode="retro"] .retro-font {
+  font-family: var(--retro-font-title);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── Pixel Sharp Corners & Pixel Borders ─────────────────────────────────── */
+[data-mode="retro"] .project-card,
+[data-mode="retro"] .drum-card,
+[data-mode="retro"] .highlight-card,
+[data-mode="retro"] .video-card,
+[data-mode="retro"] .contact__form-container,
+[data-mode="retro"] .contact__info,
+[data-mode="retro"] .skills__category,
+[data-mode="retro"] .hobby-drawer,
+[data-mode="retro"] .timeline__content,
+[data-mode="retro"] .btn,
+[data-mode="retro"] .form-input,
+[data-mode="retro"] .form-textarea,
+[data-mode="retro"] .skill-tag,
+[data-mode="retro"] .tag,
+[data-mode="retro"] .hero__badge,
+[data-mode="retro"] .hero__subtitle-pill,
+[data-mode="retro"] .social-link {
+  border-radius: 0 !important;
+  border: 3px solid var(--border-color) !important;
+  box-shadow: 4px 4px 0px #000 !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease !important;
+}
+
+[data-mode="retro"] .project-card:hover,
+[data-mode="retro"] .highlight-card:hover,
+[data-mode="retro"] .btn:hover {
+  border-color: var(--retro-cyan) !important;
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 6px 6px 0px var(--retro-magenta) !important;
+}
+
+/* ── CRT Scanlines & Vignette Overlay ─────────────────────────────────────── */
+.retro-crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99998;
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.6) 100%);
+  background-size: 100% 4px, 100% 100%;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retro-crt-overlay {
+    opacity: 0.2;
+    background: none;
+  }
+}
+
+/* ── Retro Sticky HUD Bar ────────────────────────────────────────────────── */
+.retro-hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5rem;
+  background: #05060d;
+  border-bottom: 2px solid var(--retro-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 100000;
+  font-family: var(--retro-font-title);
+  font-size: 0.62rem;
+  color: var(--retro-green);
+  box-shadow: 0 2px 10px rgba(0, 255, 255, 0.3);
+}
+
+.retro-hud__left,
+.retro-hud__center,
+.retro-hud__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.retro-hud__status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--retro-green);
+  box-shadow: 0 0 6px var(--retro-green);
+  animation: retro-blink 1s steps(1) infinite;
+}
+
+.retro-hud__btn {
+  font-family: var(--retro-font-title);
+  font-size: 0.58rem;
+  padding: 0.3rem 0.6rem;
+  background: #141933;
+  color: #fff;
+  border: 2px solid var(--retro-cyan);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-transform: uppercase;
+}
+
+.retro-hud__btn:hover {
+  background: var(--retro-cyan);
+  color: #000;
+  box-shadow: 0 0 8px var(--retro-cyan);
+}
+
+.retro-hud__btn--exit {
+  border-color: var(--retro-magenta);
+  color: var(--retro-magenta);
+}
+
+.retro-hud__btn--exit:hover {
+  background: var(--retro-magenta);
+  color: #fff;
+  box-shadow: 0 0 8px var(--retro-magenta);
+}
+
+/* Adjust header offset when HUD is active */
+[data-mode="retro"] .header {
+  top: 2.5rem !important;
+  background: rgba(14, 17, 36, 0.95) !important;
+  border-bottom: 2px solid var(--border-color);
+}
+
+[data-mode="retro"] .hero {
+  padding-top: calc(var(--nav-height) + 4.5rem) !important;
+}
+
+/* ── Arcade Command Menu Navigation ──────────────────────────────────────── */
+[data-mode="retro"] .nav__menu .nav__list {
+  gap: 0.5rem;
+}
+
+[data-mode="retro"] .nav__link {
+  font-family: var(--retro-font-title);
+  font-size: 0.68rem;
+  padding: 0.4rem 0.7rem;
+  border: 2px solid transparent;
+  color: var(--text-muted);
+}
+
+[data-mode="retro"] .nav__link:hover,
+[data-mode="retro"] .nav__link.active-link {
+  color: var(--retro-yellow) !important;
+  border-color: var(--retro-yellow);
+  background: rgba(255, 230, 0, 0.1);
+  box-shadow: 0 0 8px rgba(255, 230, 0, 0.3);
+}
+
+[data-mode="retro"] .nav__link.active-link::before {
+  content: '▶ ';
+  color: var(--retro-magenta);
+  animation: retro-blink 0.8s steps(1) infinite;
+}
+
+[data-mode="retro"] .nav__logo {
+  font-size: 0.9rem;
+  color: var(--retro-cyan);
+  text-shadow: 0 0 8px var(--retro-cyan);
+}
+
+/* ── Hero Section 8-Bit Reinterpretation ─────────────────────────────────── */
+[data-mode="retro"] .hero__badge {
+  background: #141933 !important;
+  color: var(--retro-green) !important;
+  border-color: var(--retro-green) !important;
+  font-family: var(--retro-font-title) !important;
+  font-size: 0.55rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+[data-mode="retro"] .hero__title {
+  font-size: 2.1rem;
+  line-height: 1.4;
+  text-shadow: 3px 3px 0px #000, 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+[data-mode="retro"] .hero__subtitle-pill {
+  font-family: var(--retro-font-title);
+  font-size: 0.55rem;
+  background: #11162b;
+  border-color: var(--retro-cyan) !important;
+  color: var(--retro-cyan);
+}
+
+[data-mode="retro"] .hero__subtitle-pill--drum {
+  border-color: var(--retro-magenta) !important;
+  color: var(--retro-magenta);
+}
+
+[data-mode="retro"] .hero__subtitle-pill--android {
+  border-color: var(--retro-green) !important;
+  color: var(--retro-green);
+}
+
+[data-mode="retro"] .hero__description {
+  font-family: var(--retro-font-term);
+  font-size: 1.35rem;
+  color: #d1d5db;
+}
+
+[data-mode="retro"] .btn--primary {
+  background: var(--retro-cyan) !important;
+  color: #080914 !important;
+  font-size: 0.65rem !important;
+  font-weight: 700;
+  border-color: #fff !important;
+}
+
+[data-mode="retro"] .btn--outline {
+  background: transparent !important;
+  border-color: var(--retro-magenta) !important;
+  color: var(--retro-magenta) !important;
+  font-size: 0.65rem !important;
+}
+
+[data-mode="retro"] .btn--outline:hover {
+  background: var(--retro-magenta) !important;
+  color: #fff !important;
+}
+
+/* ── RPG Player Character Profile Card ───────────────────────────────────── */
+.retro-character-card {
+  margin: 2.5rem 0;
+  padding: 1.5rem;
+  background: #0d1127;
+  border: 3px solid var(--retro-green) !important;
+  box-shadow: 6px 6px 0px #000, 0 0 16px rgba(57, 255, 20, 0.25) !important;
+  font-family: var(--retro-font-term);
+}
+
+.retro-character-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px dashed var(--retro-green);
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.retro-character-card__title {
+  font-family: var(--retro-font-title);
+  font-size: 0.85rem;
+  color: var(--retro-yellow);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.retro-character-card__tag {
+  font-family: var(--retro-font-title);
+  font-size: 0.55rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--retro-green);
+  color: #000;
+}
+
+.retro-character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.retro-stat-box {
+  background: #141933;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+}
+
+.retro-stat-box__label {
+  font-family: var(--retro-font-title);
+  font-size: 0.58rem;
+  color: var(--retro-cyan);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.retro-stat-box__value {
+  font-size: 1.35rem;
+  color: #fff;
+}
+
+.retro-character-card__list {
+  margin-top: 0.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+.retro-character-card__list li {
+  margin-bottom: 0.35rem;
+  font-size: 1.2rem;
+  color: #d1d5db;
+}
+
+.retro-character-card__list li strong {
+  color: var(--retro-yellow);
+}
+
+/* ── Decorative RPG Skill Stat Attributes ────────────────────────────────── */
+.retro-skills-disclaimer {
+  font-family: var(--retro-font-title);
+  font-size: 0.52rem;
+  color: var(--retro-amber);
+  text-align: center;
+  margin-top: -1.5rem;
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.05em;
+}
+
+[data-mode="retro"] .skills__category-title {
+  font-family: var(--retro-font-title);
+  font-size: 0.8rem;
+  color: var(--retro-yellow);
+}
+
+.retro-skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  font-family: var(--retro-font-term);
+  font-size: 1.25rem;
+}
+
+.retro-skill-bar {
+  color: var(--retro-green);
+  letter-spacing: 0.1em;
+  font-size: 1.15rem;
+}
+
+.retro-skill-badge {
+  font-family: var(--retro-font-title);
+  font-size: 0.5rem;
+  color: var(--retro-cyan);
+  margin-left: 0.5rem;
+}
+
+/* ── Projects as Missions / Adventure Levels ─────────────────────────────── */
+[data-mode="retro"] .project-badge {
+  font-family: var(--retro-font-title);
+  font-size: 0.5rem;
+  border-radius: 0;
+  border: 1px solid var(--retro-yellow);
+  background: rgba(255, 230, 0, 0.15);
+  color: var(--retro-yellow);
+}
+
+.retro-mission-header {
+  font-family: var(--retro-font-title);
+  font-size: 0.65rem;
+  color: var(--retro-magenta);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+[data-mode="retro"] .project-card__title {
+  font-size: 1.05rem;
+  color: var(--retro-cyan);
+  margin-bottom: 0.75rem;
+}
+
+[data-mode="retro"] .tag {
+  font-family: var(--retro-font-title);
+  font-size: 0.48rem;
+  background: #141933;
+  color: #fff;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-mode="retro"] .btn-link {
+  font-family: var(--retro-font-title);
+  font-size: 0.58rem;
+  color: var(--retro-yellow);
+  border: 1px solid var(--retro-yellow);
+  padding: 0.4rem 0.75rem;
+  background: rgba(255, 230, 0, 0.08);
+}
+
+[data-mode="retro"] .btn-link:hover {
+  background: var(--retro-yellow);
+  color: #000;
+}
+
+/* ── Drum Machine Arcade Soundboard Reskin ────────────────────────────────── */
+[data-mode="retro"] .drum-card {
+  background: #0d1127 !important;
+  border-color: var(--retro-magenta) !important;
+  box-shadow: 6px 6px 0px #000, 0 0 15px rgba(255, 0, 127, 0.3) !important;
+}
+
+[data-mode="retro"] .drum-card__title {
+  font-family: var(--retro-font-title);
+  font-size: 0.8rem;
+  color: var(--retro-magenta);
+}
+
+[data-mode="retro"] .drum-pad {
+  border: 2px solid var(--retro-cyan) !important;
+  background: #141933 !important;
+}
+
+[data-mode="retro"] .drum-pad:hover,
+[data-mode="retro"] .drum-pad--active {
+  border-color: var(--retro-yellow) !important;
+  background: var(--retro-yellow) !important;
+  color: #000 !important;
+  box-shadow: 0 0 10px var(--retro-yellow) !important;
+}
+
+[data-mode="retro"] .drum-pad__key {
+  font-family: var(--retro-font-title);
+  font-size: 0.5rem;
+  background: #000;
+  color: var(--retro-cyan);
+}
+
+[data-mode="retro"] .drum-btn--groove {
+  font-family: var(--retro-font-title);
+  font-size: 0.55rem;
+  border: 2px solid var(--retro-green) !important;
+  color: var(--retro-green);
+}
+
+[data-mode="retro"] .drum-bpm {
+  font-family: var(--retro-font-title);
+  font-size: 0.55rem;
+  color: var(--retro-yellow);
+}
+
+/* ── Timeline & Contact Sections in Retro Mode ───────────────────────────── */
+[data-mode="retro"] .timeline__marker {
+  border-radius: 0;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--retro-yellow);
+  background: #000;
+}
+
+[data-mode="retro"] .timeline__date {
+  font-family: var(--retro-font-title);
+  font-size: 0.58rem;
+  color: var(--retro-cyan);
+}
+
+[data-mode="retro"] .timeline__title {
+  font-family: var(--retro-font-title);
+  font-size: 0.88rem;
+  color: var(--retro-yellow);
+}
+
+[data-mode="retro"] .contact__info-title {
+  font-family: var(--retro-font-title);
+  font-size: 0.95rem;
+  color: var(--retro-green);
+}
+
+[data-mode="retro"] .contact__label {
+  font-family: var(--retro-font-title);
+  font-size: 0.52rem;
+  color: var(--retro-cyan);
+}
+
+[data-mode="retro"] .form-label {
+  font-family: var(--retro-font-title);
+  font-size: 0.55rem;
+  color: var(--retro-yellow);
+}
+
+[data-mode="retro"] .form-input,
+[data-mode="retro"] .form-textarea {
+  background: #080914 !important;
+  color: var(--retro-green) !important;
+  font-family: var(--retro-font-term) !important;
+  font-size: 1.3rem !important;
+  border-color: var(--retro-cyan) !important;
+}
+
+[data-mode="retro"] .form-input:focus,
+[data-mode="retro"] .form-textarea:focus {
+  border-color: var(--retro-green) !important;
+  box-shadow: 0 0 8px var(--retro-green) !important;
+}
+
+/* ── Activation Sequence Modal ───────────────────────────────────────────── */
+.retro-activation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 100002;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  animation: retro-flicker-in 0.3s ease-out;
+}
+
+.retro-activation-box {
+  border: 4px solid var(--retro-green);
+  background: #0a0e1c;
+  padding: 2.5rem 2rem;
+  max-width: 620px;
+  width: 100%;
+  box-shadow: 8px 8px 0px #000, 0 0 24px rgba(57, 255, 20, 0.4);
+}
+
+.retro-activation-box__header {
+  font-family: var(--retro-font-title);
+  font-size: 1.1rem;
+  color: var(--retro-yellow);
+  margin-bottom: 1.25rem;
+  text-shadow: 0 0 8px var(--retro-yellow);
+  animation: retro-pulse 0.8s ease-in-out infinite alternate;
+}
+
+.retro-activation-box__title {
+  font-family: var(--retro-font-title);
+  font-size: 0.85rem;
+  color: var(--retro-cyan);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.retro-activation-box__subtitle {
+  font-family: var(--retro-font-title);
+  font-size: 0.65rem;
+  color: var(--retro-magenta);
+  margin-bottom: 1.5rem;
+}
+
+.retro-activation-box__progress-bar {
+  width: 100%;
+  height: 14px;
+  background: #000;
+  border: 2px solid var(--retro-green);
+  margin-bottom: 1.2rem;
+  overflow: hidden;
+}
+
+.retro-activation-box__progress-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--retro-green);
+  transition: width 1.3s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+.retro-activation-box__tip {
+  font-family: var(--retro-font-term);
+  font-size: 1.2rem;
+  color: #a0aec0;
+}
+
+/* ── Achievement Notification Banner ─────────────────────────────────────── */
+.retro-achievement {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #0d1127;
+  border: 3px solid var(--retro-yellow);
+  padding: 1rem 1.25rem;
+  z-index: 100001;
+  box-shadow: 6px 6px 0px #000, 0 0 14px rgba(255, 230, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 400px;
+  animation: retro-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.retro-achievement.hide {
+  animation: retro-slide-out 0.4s ease forwards;
+}
+
+.retro-achievement__icon {
+  font-size: 2rem;
+}
+
+.retro-achievement__text {
+  flex: 1;
+}
+
+.retro-achievement__badge {
+  font-family: var(--retro-font-title);
+  font-size: 0.52rem;
+  color: var(--retro-yellow);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.retro-achievement__title {
+  font-family: var(--retro-font-title);
+  font-size: 0.68rem;
+  color: #fff;
+  margin: 0 0 0.25rem 0;
+}
+
+.retro-achievement__desc {
+  font-family: var(--retro-font-term);
+  font-size: 1.15rem;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+.retro-achievement__close {
+  font-family: var(--retro-font-title);
+  font-size: 0.8rem;
+  color: var(--retro-yellow);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes retro-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes retro-pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.03); }
+}
+
+@keyframes retro-flicker-in {
+  0% { opacity: 0; transform: scale(0.98); }
+  50% { opacity: 0.8; }
+  75% { opacity: 0.4; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes retro-slide-in {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes retro-slide-out {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+/* ── Responsive Adaptations ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .retro-hud {
+    font-size: 0.52rem;
+    padding: 0 0.5rem;
+  }
+
+  .retro-hud__center {
+    display: none; /* Hide middle info on mobile to avoid overlap */
+  }
+
+  [data-mode="retro"] .nav__menu {
+    top: calc(var(--nav-height) + 2.5rem) !important;
+  }
+
+  .retro-character-card {
+    padding: 1rem;
+  }
+
+  .retro-character-card__title {
+    font-size: 0.72rem;
+  }
+
+  .retro-stat-box__value {
+    font-size: 1.15rem;
+  }
+
+  .retro-achievement {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  [data-mode="retro"] .hero__title {
+    font-size: 1.45rem;
+  }
+
+  [data-mode="retro"] .section__title {
+    font-size: 1.15rem;
+  }
+
+  .retro-activation-box {
+    padding: 1.5rem 1rem;
+  }
+
+  .retro-activation-box__header {
+    font-size: 0.85rem;
+  }
+}
