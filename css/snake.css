@@ -1,0 +1,563 @@
+/* ==========================================================================
+   SNAKE.EXE — RETRO SNAKE EASTER EGG STYLES
+   "Eat the Portfolio" website snake mode
+   ========================================================================== */
+
+:root {
+  --snake-green: #10b981;
+  --snake-green-glow: rgba(16, 185, 129, 0.4);
+  --snake-cyan: #06b6d4;
+  --snake-cyan-glow: rgba(6, 182, 212, 0.4);
+  --snake-amber: #f59e0b;
+  --snake-amber-glow: rgba(245, 158, 11, 0.4);
+  --snake-purple: #8b5cf6;
+  --snake-purple-glow: rgba(139, 92, 246, 0.4);
+  --snake-rose: #ec4899;
+  --snake-rose-glow: rgba(236, 72, 153, 0.5);
+  --snake-bg: #090d16;
+  --snake-border: rgba(16, 185, 129, 0.35);
+}
+
+/* ── Character Span in DOM ───────────────────────────────────────────────── */
+.snake-char {
+  display: inline;
+  position: relative;
+  transition: opacity 0.15s ease;
+}
+
+.snake-char--locked {
+  filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.6));
+}
+
+.snake-char--eaten {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ── Fullscreen Game Canvas ──────────────────────────────────────────────── */
+#snake-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9995;
+  image-rendering: pixelated;
+}
+
+/* ── Activation Glitch & Transition Overlay ──────────────────────────────── */
+.snake-activation-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 13, 22, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10005;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: snakeFadeIn 0.25s ease-out;
+}
+
+.snake-activation-card {
+  background: #0d1322;
+  border: 2px solid var(--snake-green);
+  border-radius: 12px;
+  box-shadow: 0 0 35px var(--snake-green-glow), inset 0 0 20px rgba(16, 185, 129, 0.1);
+  padding: 2rem 2.5rem;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.snake-activation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--snake-green), transparent);
+  animation: snakeScanline 1.2s infinite linear;
+}
+
+.snake-activation-tag {
+  font-size: 0.65rem;
+  color: var(--snake-green);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.snake-activation-title {
+  font-size: 1.2rem;
+  color: #ffffff;
+  text-shadow: 0 0 10px var(--snake-green-glow);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.snake-activation-sub {
+  font-family: 'VT323', monospace;
+  font-size: 1.35rem;
+  color: var(--snake-cyan);
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+.snake-activation-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.snake-activation-progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--snake-green), var(--snake-cyan));
+  box-shadow: 0 0 10px var(--snake-green);
+  transition: width 0.75s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.snake-activation-help {
+  font-size: 0.55rem;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+/* ── Retro Game HUD ──────────────────────────────────────────────────────── */
+.snake-hud {
+  position: fixed;
+  top: 5rem;
+  right: 1.5rem;
+  z-index: 10000;
+  background: rgba(11, 17, 32, 0.92);
+  border: 2px solid var(--snake-green);
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px var(--snake-green-glow);
+  padding: 0.75rem 1rem;
+  font-family: 'Press Start 2P', monospace;
+  color: #f1f5f9;
+  min-width: 250px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  user-select: none;
+  -webkit-user-select: none;
+  animation: snakeHudDrop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.snake-hud__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed rgba(16, 185, 129, 0.3);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.snake-hud__title {
+  font-size: 0.62rem;
+  color: var(--snake-green);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.snake-hud__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--snake-green);
+  box-shadow: 0 0 8px var(--snake-green);
+  animation: snakeBlink 1s infinite alternate;
+}
+
+.snake-hud__actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.snake-hud__btn {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+  font-family: inherit;
+  font-size: 0.5rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.snake-hud__btn:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--snake-green);
+  color: #ffffff;
+}
+
+.snake-hud__btn--exit:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+.snake-hud__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  gap: 0.45rem 0.6rem;
+  font-size: 0.55rem;
+}
+
+.snake-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.snake-stat-label {
+  color: #94a3b8;
+  font-size: 0.45rem;
+  letter-spacing: 0.05em;
+}
+
+.snake-stat-val {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.snake-stat-val--score {
+  color: var(--snake-amber);
+}
+
+.snake-stat-val--eaten {
+  color: var(--snake-cyan);
+}
+
+.snake-stat-val--lvl {
+  color: var(--snake-green);
+}
+
+.snake-stat-val--width {
+  color: var(--snake-rose);
+}
+
+.snake-hud__progress-wrap {
+  margin-top: 0.6rem;
+}
+
+.snake-hud__progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.snake-hud__progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--snake-green), var(--snake-cyan));
+  box-shadow: 0 0 6px var(--snake-green);
+  transition: width 0.2s ease;
+}
+
+.snake-hud__hints {
+  margin-top: 0.5rem;
+  font-size: 0.44rem;
+  color: #64748b;
+  text-align: center;
+  border-top: 1px dotted rgba(255, 255, 255, 0.08);
+  padding-top: 0.35rem;
+}
+
+/* ── Level Up Banner ─────────────────────────────────────────────────────── */
+.snake-banner-lvlup {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  border: 2px solid var(--snake-amber);
+  box-shadow: 0 0 25px var(--snake-amber-glow);
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  color: #ffffff;
+  z-index: 10010;
+  text-align: center;
+  pointer-events: none;
+  animation: snakeBannerPop 1.8s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.snake-banner-lvlup span {
+  color: var(--snake-amber);
+}
+
+/* ── Locked Character Floating Hint ──────────────────────────────────────── */
+.snake-locked-hint {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--snake-amber);
+  color: var(--snake-amber);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 9998;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  animation: snakeLockedFloat 0.8s forwards ease-out;
+}
+
+/* ── Game Over & Victory Dialogs ─────────────────────────────────────────── */
+.snake-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 11, 20, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 10020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: snakeFadeIn 0.3s ease-out;
+}
+
+.snake-dialog-card {
+  background: #0d1527;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  padding: 2.2rem 2.5rem;
+  font-family: 'Press Start 2P', monospace;
+  color: #f1f5f9;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+}
+
+.snake-dialog-card--gameover {
+  border: 2px solid #ef4444;
+  box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
+}
+
+.snake-dialog-card--victory {
+  border: 2px solid var(--snake-amber);
+  box-shadow: 0 0 45px var(--snake-amber-glow);
+}
+
+.snake-dialog-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.8rem;
+  display: inline-block;
+  animation: snakeBounce 1s infinite alternate;
+}
+
+.snake-dialog-title {
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+
+.snake-dialog-card--gameover .snake-dialog-title {
+  color: #ef4444;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.snake-dialog-card--victory .snake-dialog-title {
+  color: var(--snake-amber);
+  text-shadow: 0 0 12px var(--snake-amber-glow);
+}
+
+.snake-dialog-sub {
+  font-family: 'VT323', monospace;
+  font-size: 1.35rem;
+  color: #94a3b8;
+  margin-bottom: 1.4rem;
+}
+
+.snake-dialog-stats {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.58rem;
+  text-align: left;
+}
+
+.snake-dialog-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.snake-dialog-stat-row span:first-child {
+  color: #94a3b8;
+  font-size: 0.48rem;
+}
+
+.snake-dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.snake-dialog-btn {
+  font-family: inherit;
+  font-size: 0.62rem;
+  padding: 0.75rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+  font-weight: bold;
+}
+
+.snake-dialog-btn--primary {
+  background: var(--snake-green);
+  color: #0b0f19;
+  border-color: var(--snake-green);
+  box-shadow: 0 0 12px var(--snake-green-glow);
+}
+
+.snake-dialog-btn--primary:hover {
+  background: #34d399;
+  box-shadow: 0 0 18px var(--snake-green);
+  transform: translateY(-2px);
+}
+
+.snake-dialog-btn--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.snake-dialog-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ── Mobile Virtual D-Pad Controller ─────────────────────────────────────── */
+.snake-mobile-controls {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 10000;
+  display: grid;
+  grid-template-columns: repeat(3, 46px);
+  grid-template-rows: repeat(3, 46px);
+  gap: 6px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.snake-dpad-btn {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1.5px solid var(--snake-green);
+  color: var(--snake-green);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.1s, transform 0.1s;
+}
+
+.snake-dpad-btn:active {
+  background: var(--snake-green);
+  color: #090d16;
+  transform: scale(0.92);
+}
+
+.snake-dpad-btn--up    { grid-column: 2; grid-row: 1; }
+.snake-dpad-btn--left  { grid-column: 1; grid-row: 2; }
+.snake-dpad-btn--down  { grid-column: 2; grid-row: 3; }
+.snake-dpad-btn--right { grid-column: 3; grid-row: 2; }
+
+/* ── Keyframe Animations ─────────────────────────────────────────────────── */
+@keyframes snakeFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes snakeScanline {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes snakeHudDrop {
+  from { opacity: 0; transform: translateY(-15px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes snakeBlink {
+  0%   { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+@keyframes snakeBannerPop {
+  0%   { opacity: 0; transform: translate(-50%, -20px) scale(0.9); }
+  15%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  80%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -15px) scale(0.95); }
+}
+
+@keyframes snakeLockedFloat {
+  0%   { opacity: 0; transform: translateY(0); }
+  25%  { opacity: 1; transform: translateY(-6px); }
+  75%  { opacity: 1; transform: translateY(-10px); }
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+@keyframes snakeBounce {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-6px); }
+}
+
+/* ── Responsive & Accessibility Overrides ────────────────────────────────── */
+@media (max-width: 768px) {
+  .snake-hud {
+    top: auto;
+    bottom: 1.2rem;
+    left: 1rem;
+    right: auto;
+    min-width: 200px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.48rem;
+  }
+  .snake-hud__stats {
+    gap: 0.35rem 0.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snake-activation-overlay,
+  .snake-dialog-overlay,
+  .snake-banner-lvlup,
+  .snake-hud {
+    animation: none !important;
+    transition: none !important;
+  }
+}
